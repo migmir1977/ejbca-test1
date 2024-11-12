@@ -1,0 +1,1207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:component="http://xmlns.jcp.org/jsf/composite/component"
+    xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+    xmlns:t="http://myfaces.apache.org/tomahawk">
+<ui:remove>
+	<!--
+    /*************************************************************************
+     *                                                                       *
+     *  EJBCA: The OpenSource Certificate Authority                          *
+     *                                                                       *
+     *  This software is free software; you can redistribute it and/or       *
+     *  modify it under the terms of the GNU Lesser General Public           *
+     *  License as published by the Free Software Foundation; either         *
+     *  version 2.1 of the License, or any later version.                    *
+     *                                                                       *
+     *  See terms of license at gnu.org.                                     *
+     *                                                                       *
+     *************************************************************************/
+
+     -->
+</ui:remove>
+<ui:composition template="/WEB-INF/include/template.xhtml">
+	<ui:define name="content">
+		<h:panelGroup layout="block" styleClass="header" id="title">
+			<h1>
+				<h:outputText value="#{msg.make_requests_page_title}" />
+			</h1>
+		</h:panelGroup>
+		<h:outputText value="#{msg.enroll_error_unauthorized}" rendered="#{not raAccessBean.authorizedToEnroll}"/>
+		<h:panelGroup layout="block" id="enrollMakeNewRequestContentBody" styleClass="content-body" rendered="#{raAccessBean.authorizedToEnroll}">
+			<h:form id="requestTemplateForm"
+				styleClass="pure-form pure-form-aligned">
+
+				<h:panelGroup layout="block" rendered="#{enrollMakeNewRequestBean.selectRequestTemplateRendered}"
+					id="selectRequestTemplateOuterPanel">
+					<h2>
+						<h:outputText value="#{msg.enroll_select_request_template}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<fieldset>
+							<h:panelGroup layout="block" styleClass="pure-control-group"
+                                rendered="#{enrollMakeNewRequestBean.selectEndEntityProfileRendered}">
+								<h:outputLabel for="selectEEPOneMenu" value="#{msg.enroll_certificate_type}"/>
+								<h:selectOneMenu id="selectEEPOneMenu" styleClass="jsAutoFocusLast" style="width: 30%; margin-right: 5%;"
+									value="#{enrollMakeNewRequestBean.selectedEndEntityProfile}"
+									disabled="#{enrollMakeNewRequestBean.availableEndEntityProfileSelectItems.size()==1}">
+									<f:selectItems value="#{enrollMakeNewRequestBean.availableEndEntityProfileSelectItems}"/>
+									<f:ajax event="change" execute="@this" render=":globalMessages :keyPairForm :requestInfoForm @form"/>
+									<f:validateRequired/>
+								</h:selectOneMenu>
+								<h:message for="selectEEPOneMenu" id="selectEEPOneMenuMessage" styleClass="showErrorMessage"/>
+								<h:outputText rendered="#{empty enrollMakeNewRequestBean.availableEndEntityProfileSelectItems}"
+									value="#{msg.enroll_no_available_certificate_types}" />
+								<h:outputText id="endEntityProfileDescription"
+								    styleClass="pure-u-lg-1-3" value="#{enrollMakeNewRequestBean.endEntityProfile.description}"/>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block" styleClass="pure-control-group"
+                                rendered="#{enrollMakeNewRequestBean.selectCertificateProfileRendered}">
+								<h:outputLabel for="selectCPOneMenu" value="#{msg.enroll_certificate_subtype}"/>
+								<h:selectOneMenu id="selectCPOneMenu" styleClass="jsAutoFocusLast" style="width: 30%; margin-right: 5%;"
+									value="#{enrollMakeNewRequestBean.selectedCertificateProfile}"
+									disabled="#{enrollMakeNewRequestBean.availableCertificateProfileSelectItems.size()==1}">
+									<f:selectItems value="#{enrollMakeNewRequestBean.availableCertificateProfileSelectItems}"/>
+									<f:ajax event="change" execute="@this" render=":globalMessages :keyPairForm :requestInfoForm @form"/>
+									<f:validateRequired/>
+								</h:selectOneMenu>
+								<h:message for="selectCPOneMenu" id="selectCPOneMenuMessage" styleClass="showErrorMessage"/>
+                                <h:outputText rendered="#{empty enrollMakeNewRequestBean.availableCertificateProfileSelectItems}"
+                                    value="#{msg.enroll_no_available_certificate_subtypes}" />
+                                <h:outputText id="certificateProfileDescription"
+                                    styleClass="pure-u-lg-1-3" value="#{enrollMakeNewRequestBean.certificateProfile.description}"/>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block" styleClass="pure-control-group"
+                                rendered="#{enrollMakeNewRequestBean.selectCertificateAuthorityRendered}">
+								<h:outputLabel for="selectCAOneMenu" value="#{msg.enroll_certificate_authority}"/>
+								<h:selectOneMenu id="selectCAOneMenu" styleClass="jsAutoFocusLast"
+									value="#{enrollMakeNewRequestBean.selectedCertificateAuthority}"
+									disabled="#{enrollMakeNewRequestBean.availableCertificateAuthoritySelectItems.size()==1}">
+									<f:selectItems value="#{enrollMakeNewRequestBean.availableCertificateAuthoritySelectItems}"/>
+									<f:ajax event="change" execute="@this" render=":globalMessages :keyPairForm :requestInfoForm @form"/>
+									<f:validateRequired/>
+								</h:selectOneMenu>
+								<h:message for="selectCAOneMenu" id="selectCAOneMenuMessage" styleClass="showErrorMessage"/>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block" styleClass="pure-control-group"
+								rendered="#{enrollMakeNewRequestBean.selectKeyPairGenerationRendered}">
+                                <h:outputLabel for="selectKeyPairGenerationOneMenu" value="#{msg.enroll_key_pair_generation_label}"/>
+                                <h:panelGroup id="selectKeyPairGenerationOneMenu">
+                                    <h:selectOneRadio id="selectKeyPairGeneration" styleClass="radio-button-table"
+                                        value="#{enrollMakeNewRequestBean.selectedKeyPairGeneration}" 
+                                        layout="lineDirection" style="display: inline-block;"
+                                        disabled="#{enrollMakeNewRequestBean.availableKeyPairGenerationSelectItems.size()==1}">
+                                        <f:selectItems value="#{enrollMakeNewRequestBean.availableKeyPairGenerationSelectItems}" 
+                                        	itemDescription="#{enrollMakeNewRequestBean.availableKeyPairGenerationSelectItems.description}"/>
+                                        <f:validateRequired/>
+                                        <f:ajax event="change" execute="@this" render=":globalMessages :keyPairForm :sshPubKeyForm :requestInfoForm @form"/>
+                                    </h:selectOneRadio>
+                                    <h:message for="selectKeyPairGeneration" id="selectKeyPairGenerationMessage" styleClass="showErrorMessage"/>
+                                </h:panelGroup>
+							</h:panelGroup>
+						</fieldset>
+
+                        <fieldset>
+                            <h:commandButton id="applyRequestTemplateButton"
+                                value="#{msg.enroll_update_request_template}"
+                                styleClass="pure-button ra-button jsHide"
+                                action="#{enrollMakeNewRequestBean.applyRequestTemplate}">
+                            </h:commandButton>
+                            <h:commandButton action="#{enrollMakeNewRequestBean.renderNonModifiableTemplatesToggle}"
+                                rendered="#{enrollMakeNewRequestBean.renderNonModifiableTemplatesRendered}"
+                                value="#{enrollMakeNewRequestBean.renderNonModifiableTemplates ? msg.enroll_render_non_modifiable_button_hide : msg.enroll_render_non_modifiable_button_show}"
+                                styleClass="toggleMoreButton" immediate="true">
+                                <f:ajax execute="@this" render="@form :requestInfoForm"/>
+                            </h:commandButton>
+                        </fieldset>
+                        <script>ejbca.ra.touchUpDocument(); ejbca.ra.handleAutoFocus();</script>
+					</h:panelGroup>
+				</h:panelGroup>
+
+			</h:form>
+			<h:form id="keyPairForm" styleClass="pure-form pure-form-aligned" enctype="multipart/form-data">
+
+				<h:panelGroup layout="block"
+					rendered="#{enrollMakeNewRequestBean.uploadCsrRendered and not enrollMakeNewRequestBean.renderSshEnrolmentFields}" id="uploadCsrOuterPanel">
+					<h2>
+						<h:outputText value="#{msg.enroll_upload_csr}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame" rendered="#{!enrollMakeNewRequestBean.uploadCsrDoneRendered}">
+						<t:inputFileUpload id="certificateUploadInput" 
+							value="#{enrollMakeNewRequestBean.uploadFile}" size="20" 
+							onchange="document.getElementById('keyPairForm:updateCsrInfoFields').click();"/>
+						
+						<br/>
+						
+						<h:commandButton id="updateCsrInfoFields" value="invisible import button" style="display:none"
+							action="#{enrollMakeNewRequestBean.actionUpdateCsrInfoFields}"/>
+						
+						<br/>
+						
+						<h:inputTextarea id="certificateRequest" 
+							styleClass="fineprintMono jsAutoFocusLast" style="line-height: 100%;"
+							value="#{enrollMakeNewRequestBean.certificateRequest}" cols="80" rows="20"/>
+						
+						<br/>
+						
+						<h:panelGroup layout="block"
+							rendered="#{enrollMakeNewRequestBean.renderCsrDetailedInfo}"
+							id="csrDetailedInfoPanel">
+							
+							<h:panelGroup styleClass="pure-control-group">
+								<h:outputLabel value="#{msg.enroll_filename}"/>
+								<h:outputText value="#{enrollMakeNewRequestBean.csrFileName}" styleClass="ra-csrDetailsLongText" />
+							</h:panelGroup>
+							
+							<h:panelGroup styleClass="pure-control-group">
+								<h:outputLabel value="#{msg.enroll_modulus}"/>
+								<h:outputText value="#{enrollMakeNewRequestBean.publicKeyModulus}" styleClass="ra-csrDetailsLongText" />
+							</h:panelGroup>
+							
+							<h:panelGroup styleClass="pure-control-group">
+								<h:outputLabel value="#{msg.enroll_exponent}"/>
+								<h:outputText value="#{enrollMakeNewRequestBean.publicKeyExponent}" styleClass="ra-csrDetailsLongText" />
+							</h:panelGroup>
+							
+							<h:panelGroup styleClass="pure-control-group">
+								<h:outputLabel value="#{msg.enroll_sha256_fingerprint}"/>
+								<h:outputText value="#{enrollMakeNewRequestBean.sha256Fingerprint}" styleClass="ra-csrDetailsLongText" />
+							</h:panelGroup>
+							
+							<h:panelGroup styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.signature != null}">
+								<h:outputLabel value="#{msg.enroll_signature}"/>
+								<h:outputText value="#{enrollMakeNewRequestBean.signature}" styleClass="ra-csrDetailsLongText" />
+							</h:panelGroup>
+						</h:panelGroup>
+						
+						<br/>
+						
+						<h:commandButton id="renderCsrDetailedInfoToggle" action="#{enrollMakeNewRequestBean.renderCsrDetailedInfoToggle}"
+							value="#{enrollMakeNewRequestBean.renderCsrDetailedInfo ? msg.enroll_render_non_modifiable_button_hide : msg.enroll_render_non_modifiable_button_show}"
+							styleClass="toggleMoreButton" immediate="true">
+							<f:ajax execute="@this" render=":keyPairForm" />
+						</h:commandButton>
+						
+						<br/>
+						
+						<h:message for="certificateRequest" id="certificateRequestMessage" styleClass="errorMessage"/>
+                        <br/>
+                        <h:commandButton id="uploadCsrButton" value="#{msg.enroll_upload_csr}" styleClass="pure-button ra-button"
+                            action="#{enrollMakeNewRequestBean.uploadCsr}">
+                            <f:ajax event="change" execute="@form" render=":globalMessages :requestInfoForm certificateRequestMessage @form"/>
+                        </h:commandButton>
+					</h:panelGroup>
+                    <h:panelGroup layout="block" styleClass="internal-frame" rendered="#{enrollMakeNewRequestBean.uploadCsrDoneRendered}">
+                        <h:panelGroup layout="block" styleClass="pure-control-group">
+                            <h:outputLabel for="certificateRequestNode" value="#{msg.enroll_upload_csr_keyalgo_label}"/>
+                            <h:outputText id="certificateRequestNode" value="#{enrollMakeNewRequestBean.algorithm}"/>
+                        </h:panelGroup>
+                        <h:commandButton id="changeCsrButton" value="#{msg.enroll_upload_csr_change}" styleClass="pure-button ra-button"
+                            action="#{enrollMakeNewRequestBean.uploadCsrChange}">
+                        </h:commandButton>
+                    </h:panelGroup>
+				</h:panelGroup>
+                <script>ejbca.ra.handleAutoFocus();</script>
+
+			</h:form>
+			
+			<h:form id="sshPubKeyForm" styleClass="pure-form pure-form-aligned" enctype="multipart/form-data">
+			
+			<h:panelGroup layout="block"
+					rendered="#{enrollMakeNewRequestBean.uploadSshPubKeyRequestRendered}" 
+															id="uploadSshPubKeyFormOuterPanel">
+					<h2>
+						<h:outputText value="#{msg.enroll_upload_ssh_public_key}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<t:inputFileUpload id="sshPubKeyUploadInput" 
+							value="#{enrollMakeNewRequestBean.uploadFile}" size="20" 
+							onchange="document.getElementById('sshPubKeyForm:updateSshKeyInfoFields').click();"/>
+						
+						<br/>
+						<br/>
+						
+						<h:inputTextarea id="sshPubKeyRequest" 
+							styleClass="fineprintMono jsAutoFocusLast" style="line-height: 100%;"
+							value="#{enrollMakeNewRequestBean.sshPubKeyRequest}" cols="80" rows="20"
+							onchange="document.getElementById('sshPubKeyForm:updateSshKeyInfoFields').click();">
+							<f:ajax event="keyup" execute="@this"
+                                                render=":requestInfoForm:sshEnrollmentBlock"/>
+						</h:inputTextarea>
+						
+						<br/>
+						
+						<h:commandButton id="updateSshKeyInfoFields" 
+							value="invisible import button" style="display:none"
+							action="#{enrollMakeNewRequestBean.uploadSshPubKey}"/>
+						<br/>
+						
+						<h:outputLabel value="#{msg.enroll_upload_ssh_public_key_review} : " />
+						<h:outputText value="#{enrollMakeNewRequestBean.sshPubKeyDescription}" style="color:white;"/>
+						<br/>
+						
+						<h:message for="sshPubKeyUploadInput" id="sshPubKeyRequestMessage" styleClass="errorMessage"/>
+                        <br/>
+					</h:panelGroup>
+			</h:panelGroup>
+			<script>ejbca.ra.handleAutoFocus();</script>
+			
+			</h:form>
+
+			<h:form id="requestInfoForm" styleClass="pure-form pure-form-aligned">
+				<h:panelGroup layout="block"
+					rendered="#{enrollMakeNewRequestBean.selectKeyAlgorithmRendered}" id="selectKeyAlgorithmOuterPanel">
+					<h2>
+						<h:outputText value="#{msg.enroll_select_key_algorithm}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<h:panelGroup layout="block" styleClass="pure-control-group">
+							<h:outputLabel for="selectAlgorithmOneMenu" value="#{msg.enroll_key_algorithm}" />
+							<h:selectOneMenu id="selectAlgorithmOneMenu" styleClass="jsAutoFocusLast"
+	                            value="#{enrollMakeNewRequestBean.selectedAlgorithm}"
+	                            disabled="#{enrollMakeNewRequestBean.availableAlgorithmSelectItems.size()==1}">
+								<f:selectItems value="#{enrollMakeNewRequestBean.availableAlgorithmSelectItems}" />
+								<f:ajax event="change" execute="@this" render=":globalMessages :requestInfoForm:requestPreviewOuterPanel @form"/>
+							</h:selectOneMenu>
+						</h:panelGroup>
+						<fieldset>
+							<h:commandButton id="applyAlgorithmButton"
+                                value="#{msg.enroll_update_algorithm}"
+                                styleClass="pure-button ra-button jsHide"
+                                action="#{enrollMakeNewRequestBean.applyAlgorithm}">
+                            </h:commandButton>
+						</fieldset>
+					</h:panelGroup>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" rendered="#{enrollMakeNewRequestBean.selectTokenRendered}" id="selectTokenOuterPanel">
+					<h2>
+						<h:outputText value="#{msg.enroll_select_token_type}"/>
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<h:panelGroup layout="block" styleClass="pure-control-group">
+							<h:outputLabel for="selectTokenOneMenu" value="#{msg.enroll_token}" />
+							<h:selectOneMenu id="selectTokenOneMenu" styleClass="jsAutoFocusLast"
+		                            value="#{enrollMakeNewRequestBean.selectedTokenType == 0 ? enrollMakeNewRequestBean.defaultTokenType : enrollMakeNewRequestBean.selectedTokenType}" >
+									<f:selectItems value="#{enrollMakeNewRequestBean.availableTokenTypesSelectItems}" />
+									<f:ajax event="change" execute="@this" render=":globalMessages :requestInfoForm:requestPreviewOuterPanel @form"/>
+							</h:selectOneMenu>
+						</h:panelGroup>
+					</h:panelGroup>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block"
+					rendered="#{(enrollMakeNewRequestBean.provideRequestInfoRendered and !enrollMakeNewRequestBean.uploadCsrRendered) or enrollMakeNewRequestBean.uploadCsrDoneRendered}"
+					id="requestInfoRendered">
+                    <h2>
+                        <h:outputText value="#{msg.enroll_provide_request_info}" />
+                    </h2>
+					<h:panelGroup layout="block" styleClass="internal-frame" rendered="#{enrollMakeNewRequestBean.requestInfoRendered}">
+						<h:panelGroup id="subjectDNSection" layout="block">
+							<h3>
+								<h:outputText value="#{msg.enroll_required_subject_dn_attributes}" rendered="#{enrollMakeNewRequestBean.subjectDn.requiredFieldInstances.size() gt 0}"/>
+							</h3>
+							<h:panelGroup layout="block" styleClass="internal-frame-with-left-margin" rendered="#{enrollMakeNewRequestBean.subjectDn.requiredFieldInstances.size() gt 0}">
+								<ui:repeat id="subjectDn"
+									value="#{enrollMakeNewRequestBean.subjectDn.requiredFieldInstances}"
+									var="instance"
+									varStatus="loop">
+									<h:panelGroup layout="block" styleClass="pure-control-group">
+										<h:outputLabel for="subjectDnNonModifiableField"
+											value="#{msg['subject_dn_'.concat(instance.name)]} = "
+											rendered="#{instance.required and !instance.modifiable}" />
+										<h:outputLabel for="subjectDnField"
+											value="#{msg['subject_dn_'.concat(instance.name)]} *"
+											rendered="#{instance.required and instance.modifiable}" />
+										<h:selectBooleanCheckbox value="#{instance.useDataFromEmailField}"
+											id="#{'subject_dn_email_required'}"
+											onclick="return false;"
+											rendered="#{enrollMakeNewRequestBean.isDnEmail(instance)}"
+											disabled="#{!instance.modifiable}"/>
+										<h:outputLabel for="#{'subject_dn_email_required'}" value="#{msg.subject_dn_USESEMAILFIELDDATA}" rendered="#{enrollMakeNewRequestBean.isDnEmail(instance)}"/>
+										<h:inputText id="subjectDnField" value="#{enrollMakeNewRequestBean.subjectDn.requiredFieldInstances[loop.index].value}" styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+											 rendered="#{instance.modifiable and !instance.selectable and !instance.dnEmail}">
+											<f:validator validatorId="extendedRegexValidator" />
+											<f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+											<f:validator validatorId="extendedRequiredValidator"/>
+											<f:attribute name="_required" value="#{instance.required}"/>
+											<f:attribute name="_label" value="#{instance.name}"/>
+											<f:ajax event="change" execute="@this" listener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                                render=":requestInfoForm:subjectDnMessage :requestInfoForm:requestPreviewOuterPanel"/>
+                                            <f:ajax event="keyup" execute="@this"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectDnFieldMessage"/>
+										</h:inputText>
+										<h:outputLabel id="subjectDnFieldNonModifiableLabel" value="#{enrollMakeNewRequestBean.subjectDn.requiredFieldInstances[loop.index].value}"
+											 rendered="#{!instance.modifiable and !instance.selectable and !instance.dnEmail}" styleClass="pure-control-group label" style="text-align: left">
+										</h:outputLabel>
+										<h:selectOneMenu id="subjectDnNonModifiableField" value="#{enrollMakeNewRequestBean.subjectDn.requiredFieldInstances[loop.index].value}" 
+											rendered="#{instance.selectable}" styleClass="jsAutoFocusFirst">
+											<f:selectItems value="#{instance.selectableValues}" />
+											<f:attribute name="_label" value="#{instance.name}"/>
+											<f:ajax event="change" execute="@this" listener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectDnFieldMessage">
+                                            </f:ajax>
+										</h:selectOneMenu>
+										<h:message for="subjectDnField" id="subjectDnFieldMessage" styleClass="subjectErrorMessage" errorClass="subjectErrorMessage showErrorMessage"/>
+									</h:panelGroup>
+								</ui:repeat>
+							</h:panelGroup>
+							<h3>
+								<h:outputText value="#{msg.enroll_optional_subject_dn_attributes}" rendered="#{enrollMakeNewRequestBean.subjectDn.optionalFieldInstances.size() gt 0}"/>
+							</h3>
+							<h:panelGroup layout="block" styleClass="internal-frame-with-left-margin" rendered="#{enrollMakeNewRequestBean.subjectDn.optionalFieldInstances.size() gt 0}">
+							
+								<ui:param name="limit" value="#{enrollMakeNewRequestBean.numberOfOptionalSdnFieldsToShow}"/>
+								<ui:repeat id="subjectDnOptionalFields"
+									value="#{enrollMakeNewRequestBean.subjectDn.optionalFieldInstances}"
+									var="instance"
+									varStatus="loop">
+									<ui:fragment rendered="#{loop.index lt limit}">
+										<h:panelGroup layout="block" styleClass="pure-control-group">
+										<h:outputLabel for="subjectDnFieldOptional"
+											value="#{msg['subject_dn_'.concat(instance.name)]}"
+											rendered="#{!instance.required}" />
+
+											<h:selectBooleanCheckbox value="#{instance.useDataFromEmailField}"
+												id="#{'subjectDnEmailOptional'}"
+												rendered="#{enrollMakeNewRequestBean.isDnEmail(instance)}"/>
+											<h:outputLabel for="#{'subjectDnEmailOptional'}" value="#{msg.subject_dn_USESEMAILFIELDDATA}" rendered="#{enrollMakeNewRequestBean.isDnEmail(instance)}"/>
+
+										<h:inputText id="subjectDnFieldOptional" value="#{enrollMakeNewRequestBean.subjectDn.optionalFieldInstances[loop.index].value}" styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+											rendered="#{!instance.required and !instance.selectable and !instance.dnEmail}" >
+											<f:validator validatorId="extendedRegexValidator" />
+											<f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+											<f:validator validatorId="extendedRequiredValidator"/>
+											<f:attribute name="_required" value="#{instance.required}"/>
+											<f:attribute name="_label" value="#{instance.name}"/>
+											<f:ajax event="change" execute="@this" listener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                                render=":requestInfoForm:subjectDnMessage :requestInfoForm:requestPreviewOuterPanel"/>
+                                            <f:ajax event="keyup" execute="@this"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectDnFieldMessage"/>
+										</h:inputText>
+
+										<h:selectOneMenu value="#{enrollMakeNewRequestBean.subjectDn.optionalFieldInstances[loop.index].value}" rendered="#{instance.selectable}" styleClass="jsAutoFocusFirst">
+											<f:selectItems value="#{instance.selectableValues}" />
+											<f:attribute name="_label" value="#{instance.name}"/>
+											<f:ajax event="change" execute="@this" listener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectDnFieldMessage">
+                                            </f:ajax>
+										</h:selectOneMenu>
+										<h:message for="subjectDnFieldOptional" id="optionalSubjectDnFieldMessage" styleClass="subjectErrorMessage" errorClass="subjectErrorMessage showErrorMessage"/>
+									</h:panelGroup>
+									</ui:fragment>
+ 								</ui:repeat>
+ 								</h:panelGroup>
+														
+							<h:inputHidden id="subjectDnMessageInput" binding="#{enrollMakeNewRequestBean.subjectDnMessagesComponent}"/>
+							<h:message for="subjectDnMessageInput" id="subjectDnMessage" errorClass="subjectErrorMessage showErrorMessage"/>
+							<fieldset>
+							 <h:commandButton id="showFullOptionalSubjectDNFieldsToggle" action="#{enrollMakeNewRequestBean.showFullOptionalSdnFieldsToggle}"
+                                rendered="#{enrollMakeNewRequestBean.renderOptionalSdnFieldToggler}" actionListener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                value="#{enrollMakeNewRequestBean.showMoreOptionalSdnFields ? msg.enroll_render_more_optional_fields: msg.enroll_render_less_optional_fields}"
+                                styleClass="toggleMoreButton" immediate="true">
+								<f:ajax execute="@this"
+									render=":requestInfoForm:subjectDNSection" />
+							</h:commandButton>
+							</fieldset>
+						</h:panelGroup>
+						<h:panelGroup id="sanSection" layout="block" styleClass="internal-frame" rendered="#{enrollMakeNewRequestBean.subjectAlternativeNameRendered}">
+							<h3>
+								<h:outputText value="#{msg.enroll_required_subject_alternative_name_attributes}" rendered="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances.size() gt 0}"/>
+							</h3>
+							<h:panelGroup layout="block" styleClass="internal-frame-with-left-margin" rendered="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances.size() gt 0}">
+							
+							<ui:repeat id="subjectAlternativeName"
+								value="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances}"
+								var="instance"
+								varStatus="loop">
+								<h:panelGroup layout="block" styleClass="pure-control-group">
+									<h:outputLabel for="subjectAltNameField"
+										value="#{msg['subject_alternative_name_'.concat(instance.name)]} = "
+										rendered="#{instance.required and !instance.modifiable}" />
+									<h:outputLabel for="subjectAltNameField"
+										value="#{msg['subject_alternative_name_'.concat(instance.name)]} *"
+										rendered="#{instance.required and instance.modifiable}" />
+                                    <h:panelGroup rendered="#{!instance.upnRfc and !instance.rfcUseEmail and !instance.dnsCopyCheckbox}">
+                                        <h:inputText id="subjectAltNameField" value="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances[loop.index].value}" styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+                                            rendered="#{!instance.selectable and instance.modifiable}">
+                                            <f:validator validatorId="extendedRegexValidator" />
+                                            <f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+                                            <f:validator validatorId="extendedRequiredValidator"/>
+                                            <f:attribute name="_required" value="#{instance.required}"/>
+                                            <f:attribute name="_label" value="#{instance.name}"/>
+                                            <f:ajax event="change" execute="@this"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage"/>
+                                            <f:ajax event="keyup" execute="@this"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage"/>
+                                        </h:inputText>                                        
+										<h:outputText id="sANNonModifiableField" rendered="#{!instance.modifiable and !instance.selectable}" value="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances[loop.index].value}"/>
+                                        <h:selectOneMenu value="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances[loop.index].value}"
+                                        	rendered="#{instance.selectable}" styleClass="jsAutoFocusFirst">
+                                            <f:selectItems value="#{instance.selectableValues}" />
+                                            <f:attribute name="_label" value="#{instance.name}"/>
+                                            <f:ajax event="change" execute="@this"
+                                                render=":requestInfoForm:subjectDnMessage :requestInfoForm:requestPreviewOuterPanel 
+                                                subjectAltNameFieldMessage"/>
+                                        </h:selectOneMenu>
+                                        <h:message for="subjectAltNameField" id="subjectAltNameFieldMessage" styleClass="showErrorMessage"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{instance.rfcUseEmail}">
+                                        <h:selectBooleanCheckbox id="rfcEmailUsed" value="#{enrollMakeNewRequestBean.subjectAlternativeName.requiredFieldInstances[loop.index].rfcEmailUsed}" disabled="true">
+                                            <f:ajax event="click" listener="#{enrollMakeNewRequestBean.updateRfcAltName}"
+                                                execute="@this" render=":requestInfoForm:requestPreviewOuterPanel" />
+                                        </h:selectBooleanCheckbox>
+                                        <h:outputLabel for="rfcEmailUsed" value="#{msg.subject_dn_USESEMAILFIELDDATA}"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{instance.upnRfc and !instance.rfcUseEmail}">
+                                        <h:inputText id="upnRfcEmail" rendered="#{instance.isSelectableValuesUpnRfcDomainOnly()}">
+                                            <f:ajax event="change" listener="#{enrollMakeNewRequestBean.upnRfc}"
+                                                execute="@this upnRfcEmail upnRfcDomain" render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage" />
+                                            <f:event type="postValidate" listener="#{enrollMakeNewRequestBean.validateUpnRfcEmail}"/>
+                                        </h:inputText>
+                                        <h:inputText id="upnRfcEmail2" value="#{instance.defaultValue}"
+                                        	rendered="#{instance.selectableValuesUpnRfc.size() == 1 and !instance.isSelectableValuesUpnRfcDomainOnly() and instance.modifiable}">
+                                            <f:ajax event="change" listener="#{enrollMakeNewRequestBean.upnRfc}"
+                                                execute="@this upnRfcEmail2" render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage" />
+                                            <f:event type="postValidate" listener="#{enrollMakeNewRequestBean.validateUpnRfcEmail}"/>
+                                        </h:inputText>
+                                        <h:outputText id="upnRfcEmailNonModifiableField" value="#{instance.upnRfcEmailNonModifiableField}"
+                                        	rendered="#{instance.selectableValuesUpnRfc.size() == 1 and instance.defaultValue.contains('@') and !instance.modifiable}" style="color:white;">
+                                        </h:outputText>
+                                        <h:outputText value=" @ " rendered="#{(instance.selectableValuesUpnRfc.size() == 1 and instance.isSelectableValuesUpnRfcDomainOnly()) or (instance.selectableValuesUpnRfc.size() > 1 and instance.isSelectableValuesUpnRfcDomainOnly())}"/>
+                                        <h:selectOneMenu id="upnRfcDomain" rendered="#{(instance.selectableValuesUpnRfc.size() == 1 and instance.isSelectableValuesUpnRfcDomainOnly()) or instance.selectableValuesUpnRfc.size() > 1}" styleClass="jsAutoFocusFirst">
+                                            <f:selectItems value="#{instance.selectableValuesUpnRfc}" />
+                                            <f:attribute name="_label" value="#{instance.name}"/>
+                                            <f:ajax event="change" listener="#{enrollMakeNewRequestBean.upnRfc}"
+                                                execute="@this upnRfcEmail upnRfcDomain" render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage" />
+                                        </h:selectOneMenu>                                        
+                                        <h:message for="upnRfcEmail" id="upnRfcEmailMessage" styleClass="showErrorMessage"/>
+                                        <h:message for="upnRfcEmail2" id="upnRfcEmailMessage2" styleClass="showErrorMessage"/>
+                                    </h:panelGroup>
+									<h:panelGroup rendered="#{instance.copyDns}">
+										<h:outputText value="#{msg.subject_alternative_name_USEENTITYCNFIELD}" styleClass="ra-outputText" />
+									</h:panelGroup>
+								</h:panelGroup>
+							</ui:repeat>
+							</h:panelGroup>
+							
+							<h3>
+								<h:outputText value="#{msg.enroll_optional_subject_alternative_name_attributes}" rendered="#{enrollMakeNewRequestBean.subjectAlternativeName.optionalFieldInstances.size() gt 0}"/>
+							</h3>
+							<h:panelGroup layout="block" styleClass="internal-frame-with-left-margin" rendered="#{enrollMakeNewRequestBean.subjectAlternativeName.optionalFieldInstances.size() gt 0}">
+							
+							<ui:param name="limit" value="#{enrollMakeNewRequestBean.numberOfOptionalSanFieldsToShow}"/>
+							<ui:repeat id="subjectAlternativeNameOptional"
+								value="#{enrollMakeNewRequestBean.subjectAlternativeName.optionalFieldInstances}"
+								var="instance"
+								varStatus="loop">
+								<ui:fragment rendered="#{loop.index lt limit}">
+								
+								<h:panelGroup layout="block" styleClass="pure-control-group">
+									<h:outputLabel for="subjectAltNameOptionalField"
+										value="#{msg['subject_alternative_name_'.concat(instance.name)]}"
+										rendered="#{!instance.required}" />
+                                    <h:panelGroup rendered="#{!instance.upnRfc and !instance.rfcUseEmail and !instance.dnsCopyCheckbox}">
+                                        <h:inputText id="subjectAltNameOptionalField" value="#{enrollMakeNewRequestBean.subjectAlternativeName.optionalFieldInstances[loop.index].value}" styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+                                            rendered="#{!instance.required and !instance.selectable}" >
+                                            <f:validator validatorId="extendedRegexValidator" />
+                                            <f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+                                            <f:validator validatorId="extendedRequiredValidator"/>
+                                            <f:attribute name="_required" value="#{instance.required}"/>
+                                            <f:attribute name="_label" value="#{instance.name}"/>
+                                            <f:ajax event="change" execute="@this"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage"/>
+                                            <f:ajax event="keyup" execute="@this"
+                                                render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage"/>
+                                        </h:inputText>
+                                        <h:selectOneMenu value="#{enrollMakeNewRequestBean.subjectAlternativeName.optionalFieldInstances[loop.index].value}" rendered="#{instance.selectable}" styleClass="jsAutoFocusFirst">
+                                            <f:selectItems value="#{instance.selectableValues}" />
+                                            <f:attribute name="_label" value="#{instance.name}"/>
+                                            <f:ajax event="change" execute="@this"
+                                                render=":requestInfoForm:subjectDnMessage :requestInfoForm:requestPreviewOuterPanel 
+                                                subjectAltNameFieldMessage"/>
+                                        </h:selectOneMenu>
+                                        <h:message for="subjectAltNameOptionalField" id="subjectAltNameOptionalFieldMessage" styleClass="showErrorMessage"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{instance.rfcUseEmail}">
+                                        <h:selectBooleanCheckbox id="rfcEmailUsed" value="#{enrollMakeNewRequestBean.subjectAlternativeName.optionalFieldInstances[loop.index].rfcEmailUsed}">
+                                            <f:ajax event="click" listener="#{enrollMakeNewRequestBean.updateRfcAltName}"
+                                                execute="@this" render=":requestInfoForm:requestPreviewOuterPanel" />
+                                        </h:selectBooleanCheckbox>
+                                        <h:outputLabel for="rfcEmailUsed" value="#{msg.subject_dn_USESEMAILFIELDDATA}"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{instance.upnRfc and !instance.rfcUseEmail}">
+                                        <h:inputText id="upnRfcEmail" rendered="#{instance.isSelectableValuesUpnRfcDomainOnly()}">
+                                            <f:ajax event="change" listener="#{enrollMakeNewRequestBean.upnRfc}"
+                                                execute="@this upnRfcEmail upnRfcDomain" render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage" />
+                                            <f:event type="postValidate" listener="#{enrollMakeNewRequestBean.validateUpnRfcEmail}"/>
+                                        </h:inputText>
+                                        <h:inputText id="upnRfcEmail2" value="#{instance.defaultValue}"
+                                        	rendered="#{instance.selectableValuesUpnRfc.size() == 1 and !instance.isSelectableValuesUpnRfcDomainOnly() and instance.modifiable}">
+                                            <f:ajax event="change" listener="#{enrollMakeNewRequestBean.upnRfc}"
+                                                execute="@this upnRfcEmail2" render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage" />
+                                            <f:event type="postValidate" listener="#{enrollMakeNewRequestBean.validateUpnRfcEmail}"/>
+                                        </h:inputText>
+                                        <h:outputText id="upnRfcEmailNonModifiableField" value="#{instance.upnRfcEmailNonModifiableField}"
+                                        	rendered="#{instance.selectableValuesUpnRfc.size() == 1 and instance.defaultValue.contains('@') and !instance.modifiable}" style="color:white;">                                            
+                                        </h:outputText>
+                                        <h:outputText value=" @ " rendered="#{(instance.selectableValuesUpnRfc.size() == 1 and instance.isSelectableValuesUpnRfcDomainOnly()) or (instance.selectableValuesUpnRfc.size() > 1 and instance.isSelectableValuesUpnRfcDomainOnly())}"/>
+                                        <h:selectOneMenu id="upnRfcDomain" rendered="#{(instance.selectableValuesUpnRfc.size() == 1 and instance.isSelectableValuesUpnRfcDomainOnly()) or instance.selectableValuesUpnRfc.size() > 1}" styleClass="jsAutoFocusFirst">
+                                            <f:selectItems value="#{instance.selectableValuesUpnRfc}" />
+                                            <f:attribute name="_label" value="#{instance.name}"/>
+                                            <f:ajax event="change" listener="#{enrollMakeNewRequestBean.upnRfc}"
+                                                execute="@this upnRfcEmail upnRfcDomain" render=":requestInfoForm:requestPreviewOuterPanel subjectAltNameFieldMessage" />
+                                        </h:selectOneMenu>
+                                        <h:message for="upnRfcEmail" id="upnRfcEmailMessage" styleClass="showErrorMessage"/>
+                                        <h:message for="upnRfcEmail2" id="upnRfcEmailMessage2" styleClass="showErrorMessage"/>
+                                    </h:panelGroup>
+									<h:panelGroup rendered="#{instance.copyDns}">
+										<h:outputText value="#{msg.subject_alternative_name_USEENTITYCNFIELD}" styleClass="ra-outputText"/>
+									</h:panelGroup>
+                            	</h:panelGroup>
+                            	</ui:fragment>
+							</ui:repeat>
+                           
+							</h:panelGroup>
+														
+							<fieldset>
+							 <h:commandButton id="showFullOptionalSANFieldToggle" action="#{enrollMakeNewRequestBean.showFullOptionalSanFieldsToggle}"
+                                rendered="#{enrollMakeNewRequestBean.renderOptionalSanFieldToggler}" actionListener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                value="#{enrollMakeNewRequestBean.showMoreOptionalSanFields ? msg.enroll_render_more_optional_fields: msg.enroll_render_less_optional_fields}"
+                                styleClass="toggleMoreButton" immediate="true">
+								<f:ajax execute="@this"
+									render=":requestInfoForm:sanSection" />
+							</h:commandButton>
+							</fieldset>
+						</h:panelGroup>
+						
+						<h:panelGroup id="nameConstraintSection" layout="block" styleClass="pure-control-group" 
+									rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered() or 
+													enrollMakeNewRequestBean.isNameConstraintExcludedRendered()}">
+							
+							<h3>
+								<h:outputText value="#{msg.enroll_name_constraint_attributes}" rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered()}"/>
+							</h3>
+							<h:panelGroup layout="block" styleClass="pure-control-group" 
+										rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered()}">
+							
+							<h:panelGroup rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered()}" >
+									<h:outputLabel for="nameConstraintPermitted"
+										value="#{msg.enroll_name_constraint_permitted}"
+										rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered() and 
+														!enrollMakeNewRequestBean.isNameConstraintPermittedRequired()}" />
+									<h:outputLabel for="nameConstraintPermitted"
+										value="#{msg.enroll_name_constraint_permitted} *"
+										rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered() and 
+														enrollMakeNewRequestBean.isNameConstraintPermittedRequired()}" />
+									<h:inputTextarea id="nameConstraintPermitted" rows="4" cols="38"
+											value="#{enrollMakeNewRequestBean.nameConstraintPermitted}"
+                                        rendered="#{enrollMakeNewRequestBean.isNameConstraintPermittedRendered()}" 
+                                        required="#{enrollMakeNewRequestBean.isNameConstraintPermittedRequired()}"
+                                        requiredMessage="#{msg.enroll_name_constraint_permitted_required}">
+                                   </h:inputTextarea>
+                                   <h:message for="nameConstraintPermitted" id="nameConstraintPermittedMessage" styleClass="validationErrorMessage showErrorMessage"/>
+                            </h:panelGroup>
+                            
+                            </h:panelGroup>
+                            
+                            <h:panelGroup layout="block" styleClass="pure-control-group" 
+										rendered="#{enrollMakeNewRequestBean.isNameConstraintExcludedRendered()}">
+                            
+                            <h:panelGroup rendered="#{enrollMakeNewRequestBean.isNameConstraintExcludedRendered()}" >
+									<h:outputLabel for="nameConstraintExcluded"
+										value="#{msg.enroll_name_constraint_excluded}"
+										rendered="#{enrollMakeNewRequestBean.isNameConstraintExcludedRendered() and 
+														!enrollMakeNewRequestBean.isNameConstraintExcludedRequired()}" />
+									<h:outputLabel for="nameConstraintExcluded"
+										value="#{msg.enroll_name_constraint_excluded} *"
+										rendered="#{enrollMakeNewRequestBean.isNameConstraintExcludedRendered() and 
+														enrollMakeNewRequestBean.isNameConstraintExcludedRequired()}" />
+									<h:inputTextarea id="nameConstraintExcluded" rows="4" cols="38"
+											value="#{enrollMakeNewRequestBean.nameConstraintExcluded}"
+                                        rendered="#{enrollMakeNewRequestBean.isNameConstraintExcludedRendered()}" 
+                                        required="#{enrollMakeNewRequestBean.isNameConstraintExcludedRequired()}"
+                                        requiredMessage="#{msg.enroll_name_constraint_excluded_required}">
+                                   </h:inputTextarea>
+                                   <h:message for="nameConstraintExcluded" id="nameConstraintExcludedMessage" styleClass="validationErrorMessage showErrorMessage"/>
+                            </h:panelGroup>
+                            
+                            </h:panelGroup>
+                       	</h:panelGroup>
+							
+						<h:panelGroup id="subjectDirectoryAttributeSection" layout="block" styleClass="internal-frame" rendered="#{enrollMakeNewRequestBean.subjectDirectoryAttributesRendered}">
+							<h3>
+								<h:outputText value="#{msg.enroll_required_subject_directory_attributes}" rendered="#{enrollMakeNewRequestBean.subjectDirectoryAttributes.requiredFieldInstances.size() gt 0}" />
+							</h3>
+							<h:panelGroup layout="block" styleClass="internal-frame-with-left-margin" rendered="#{enrollMakeNewRequestBean.subjectDirectoryAttributes.requiredFieldInstances.size() gt 0}">
+							
+							<ui:repeat id="subjectDirectoryAttributes"
+								value="#{enrollMakeNewRequestBean.subjectDirectoryAttributes.requiredFieldInstances}"
+								var="instance">
+								<h:panelGroup layout="block" styleClass="pure-control-group">
+									<h:outputLabel for="subjectDirectoryField"
+										value="#{msg['subject_directory_attributes_'.concat(instance.name)]} = "
+										rendered="#{instance.required and !instance.modifiable}" />
+									<h:outputLabel for="subjectDirectoryField"
+										value="#{msg['subject_directory_attributes_'.concat(instance.name)]} *"
+										rendered="#{instance.required and instance.modifiable}" />
+									<h:inputText id="subjectDirectoryField" value="#{instance.value}" styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+										rendered="#{!instance.selectable and instance.modifiable}" required="#{instance.require}" >
+										<f:validator validatorId="extendedRegexValidator" />
+										<f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+										<f:validator validatorId="extendedRequiredValidator"/>
+										<f:attribute name="_required" value="#{instance.required}"/>
+										<f:attribute name="_label" value="#{instance.name}"/>
+										<f:ajax event="change" execute="@this"
+											render=":requestInfoForm:requestPreviewOuterPanel subjectDirectoryAttributesMessage"/>
+										<f:ajax event="keyup" execute="@this"
+											render=":requestInfoForm:requestPreviewOuterPanel subjectDirectoryAttributesMessage"/>
+									</h:inputText>
+									<h:outputLabel for="subjectDirectoryNonModifiableField"
+										value="#{msg['subject_directory_attributes_'.concat(instance.name)]} = "
+										rendered="#{!instance.modifiable and instance.required}" />
+									<h:outputText id="subjectDirectoryNonModifiableField" rendered="#{!instance.modifiable and instance.required}" value="#{instance.value}" style="color:white;"/>
+									<h:selectOneMenu value="#{instance.value}" rendered="#{instance.selectable}" styleClass="jsAutoFocusFirst">
+										<f:selectItems value="#{instance.selectableValues}" />
+										<f:attribute name="_label" value="#{instance.name}"/>
+										<f:ajax event="change" execute="@this"
+											render=":requestInfoForm:requestPreviewOuterPanel subjectDirectoryAttributesMessage"/>
+									</h:selectOneMenu>
+									<h:message for="subjectDirectoryField" id="subjectDirectoryAttributesMessage" styleClass="showErrorMessage"/>
+								</h:panelGroup>
+							</ui:repeat>
+							</h:panelGroup>
+							
+							<h3>
+								<h:outputText value="#{msg.enroll_optional_subject_directory_attributes}" rendered="#{enrollMakeNewRequestBean.subjectDirectoryAttributes.optionalFieldInstances.size() gt 0}"/>
+							</h3>
+							<h:panelGroup layout="block" styleClass="internal-frame-with-left-margin" rendered="#{enrollMakeNewRequestBean.subjectDirectoryAttributes.optionalFieldInstances.size() gt 0}">
+							
+							<ui:param name="limit" value="#{enrollMakeNewRequestBean.numberOfOptionalSdaFieldsToShow}"/>
+							<ui:repeat id="subjectDirectoryOptionalAttributes"
+								value="#{enrollMakeNewRequestBean.subjectDirectoryAttributes.optionalFieldInstances}"
+								var="instance"
+								varStatus="loop">
+								<ui:fragment rendered="#{loop.index lt limit}">
+								<h:panelGroup layout="block" styleClass="pure-control-group">
+									<h:outputLabel for="subjectDirectoryOptionalField"
+										value="#{msg['subject_directory_attributes_'.concat(instance.name)]}"
+										rendered="#{!instance.selectable}" />
+									<h:inputText id="subjectDirectoryOptionalField" value="#{instance.value}" styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+										rendered="#{!instance.selectable}" >
+										<f:validator validatorId="extendedRegexValidator" />
+										<f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+										<f:validator validatorId="extendedRequiredValidator"/>
+										<f:attribute name="_required" value="#{instance.required}"/>
+										<f:attribute name="_label" value="#{instance.name}"/>
+										<f:ajax event="change" execute="@this"
+											render=":requestInfoForm:requestPreviewOuterPanel subjectDirectoryAttributesMessage"/>
+										<f:ajax event="keyup" execute="@this"
+											render=":requestInfoForm:requestPreviewOuterPanel subjectDirectoryAttributesMessage"/>
+									</h:inputText>
+									<h:selectOneMenu value="#{instance.value}" rendered="#{instance.selectable}" styleClass="jsAutoFocusFirst">
+										<f:selectItems value="#{instance.selectableValues}" />
+										<f:attribute name="_label" value="#{instance.name}"/>
+										<f:ajax event="change" execute="@this"
+											render=":requestInfoForm:requestPreviewOuterPanel subjectDirectoryAttributesMessage"/>
+									</h:selectOneMenu>
+									<h:message for="subjectDirectoryOptionalField" id="optionalSubjectDirectoryAttributesMessage" styleClass="showErrorMessage"/>
+								</h:panelGroup>
+								</ui:fragment>
+							</ui:repeat>
+							</h:panelGroup>
+							
+							<fieldset>
+							 <h:commandButton id="showFullOptionalSubjectDirectoryAttributeFieldToggle" action="#{enrollMakeNewRequestBean.showFullOptionalSdaFieldsToggle}"
+                                rendered="#{enrollMakeNewRequestBean.renderOptionalSdaFieldToggler}" actionListener="#{enrollMakeNewRequestBean.checkSubjectDn}"
+                                value="#{enrollMakeNewRequestBean.showMoreOptionalSdaFields ? msg.enroll_render_more_optional_fields: msg.enroll_render_less_optional_fields}"
+                                styleClass="toggleMoreButton" immediate="true">
+								<f:ajax execute="@this"
+									render=":requestInfoForm:subjectDirectoryAttributeSection" />
+							</h:commandButton>
+							</fieldset>
+						</h:panelGroup>
+						<h:panelGroup layout="block" styleClass="internal-frame" rendered="#{enrollMakeNewRequestBean.renderOtherCertificateData}">
+							<h3>
+								<h:outputText value="#{msg.enroll_other_cert_data}" />
+							</h3>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderCertExtensionDataField}">
+								<h:outputLabel for="certExtensionDataField" value="#{msg.enroll_cert_extension_data}"/>
+								<h:inputTextarea id="certExtensionDataField" value="#{enrollMakeNewRequestBean.extensionData}">
+                                	<f:validator validatorId="oidValidator"/>
+                                	<f:attribute name="beginsWith" value="true"/>	
+								</h:inputTextarea>
+								<h:message for="certExtensionDataField" id="certExtensionDataFieldMessage" styleClass="showErrorMessage"/>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderCertValidityStartTime}">
+								<h:outputLabel for="certValidityStartTime" value="#{msg.enroll_cert_validity_start_time}"/>
+								<h:inputText id="certValidityStartTime" value="#{enrollMakeNewRequestBean.certValidityStartTime}" 
+								disabled="#{not enrollMakeNewRequestBean.certValidityStartTimeModifiable}" 
+								pt:placeholder="(ISO 8601 date: [yyyy-MM-dd HH:mm:ssZZ]: or days:hours:minutes)">
+								<f:validator validatorId="dateValidator"/>
+								</h:inputText>
+								<h:message for="certValidityStartTime" id="certValidityStartTimeMessage" styleClass="showErrorMessage"/>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderCertValidityEndTime}">
+								<h:outputLabel for="certValidityEndTime" value="#{msg.enroll_cert_validity_end_time}"/>
+								<h:inputText id="certValidityEndTime" value="#{enrollMakeNewRequestBean.certValidityEndTime}" 
+								disabled="#{not enrollMakeNewRequestBean.certValidityEndTimeModifiable}"
+								pt:placeholder="(ISO 8601 date: [yyyy-MM-dd HH:mm:ssZZ]: or days:hours:minutes)">
+								<f:validator validatorId="dateValidator"/>
+								</h:inputText>
+								<h:message for="certValidityEndTime" id="certValidityEndTimeMessage" styleClass="showErrorMessage"/>
+							</h:panelGroup>
+
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderPsd2QcStatementField}">
+								<h:outputLabel for="psd2QcNcaName" value="#{msg.enroll_psd2_ncaname}"/>
+								<h:inputText id="psd2QcNcaName" value="#{enrollMakeNewRequestBean.psd2NcaName}"/>
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderPsd2QcStatementField}">
+								<h:outputLabel for="psd2QcNcaId" value="#{msg.enroll_psd2_ncaid}"/>
+								<h:inputText id="psd2QcNcaId" value="#{enrollMakeNewRequestBean.psd2NcaId}"/>
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderPsd2QcStatementField}">
+								<h:outputLabel for="psd2QcPspRoles" value="#{msg.enroll_psd2_psp_roles}"/>
+								<h:selectManyListbox id="psd2QcPspRoles" value="#{enrollMakeNewRequestBean.psd2PspRoles}">
+									<f:selectItems value="#{enrollMakeNewRequestBean.availablePsd2PspRoles}"/>
+								</h:selectManyListbox>
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.cabfOrganizationIdentifierRendered}">
+								<h:outputLabel for="cabfOrganizationIdentifier" value="#{msg.enroll_cabf_organizationidentifier}"/>
+								<h:inputText id="cabfOrganizationIdentifier" value="#{enrollMakeNewRequestBean.cabfOrganizationIdentifier}"
+									pt:pattern="#{enrollMakeNewRequestBean.cabfOrganizationIdentifierRegex}"
+									pt:title="#{msg.enroll_cabf_organizationidentifier_format}"
+									disabled="#{not enrollMakeNewRequestBean.cabfOrganizationIdentifierModifiable}">
+									<f:validator validatorId="extendedRegexValidator" />
+									<f:attribute name="pattern" value="#{enrollMakeNewRequestBean.cabfOrganizationIdentifierRegex}"/>
+									<f:validator validatorId="extendedRequiredValidator"/>
+									<f:attribute name="_required" value="#{enrollMakeNewRequestBean.cabfOrganizationIdentifierRequired}"/>
+									<f:attribute name="_label" value="#{msg.enroll_cabf_organizationidentifier}"/>
+								</h:inputText>
+								<h:message for="cabfOrganizationIdentifier" id="cabfOrganizationIdentifierMessage" styleClass="validationErrorMessage showErrorMessage"/>
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.renderIssuanceRevocationReason}">
+								<h:outputLabel for="issuanceRevocationReason" value="#{msg.enroll_issuance_revocation_reason}"/>
+								<h:selectOneMenu id="issuanceRevocationReason" value="#{enrollMakeNewRequestBean.selectedIssuanceRevocationReason}"
+									disabled="#{!enrollMakeNewRequestBean.issuanceRevocationReasonModifable}">
+									<f:selectItems value="#{enrollMakeNewRequestBean.availableRevocationReasons}"/>
+								</h:selectOneMenu>
+							</h:panelGroup>
+						</h:panelGroup>
+						<h:panelGroup id="otherDataSection" layout="block" styleClass="internal-frame" rendered="#{enrollMakeNewRequestBean.renderOtherData}">
+							<h3>
+								<h:outputText value="#{msg.enroll_other_data}" />
+							</h3>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.useKeyRecoverable}">
+								<h:outputLabel for="keyRecoveryCheckbox" value="#{msg.component_eedetails_field_keyrecoverable}"/>
+								<h:selectBooleanCheckbox id="keyRecoveryCheckbox" value="#{enrollMakeNewRequestBean.keyRecoverableUse}" 
+										rendered="#{enrollMakeNewRequestBean.useKeyRecoverable}" disabled="#{enrollMakeNewRequestBean.keyRecoveryRequired}">
+                            	    <f:ajax execute="@this" render=":requestInfoForm:requestPreviewOuterPanel" />
+                            	</h:selectBooleanCheckbox>
+						    </h:panelGroup>
+						</h:panelGroup>
+                        <fieldset>
+    						<h:commandButton id="updateRequestPreview"
+    							value="#{msg.enroll_update_request_preview}"
+    							action="#{enrollMakeNewRequestBean.updateRequestPreview}"
+    							actionListener="#{enrollMakeNewRequestBean.checkRequestPreview}"
+    							rendered="#{enrollMakeNewRequestBean.updateRequestPreviewButtonRendered}"
+    							styleClass="pure-button ra-button jsHide">
+    						</h:commandButton>
+                        </fieldset>
+						<script>ejbca.ra.touchUpDocument(); ejbca.ra.handleAutoFocus();</script>
+					</h:panelGroup>
+				</h:panelGroup>
+				<h:panelGroup layout="block" id="eabBlock" rendered="#{enrollMakeNewRequestBean.EABrendered}">
+					<h2>
+						<h:outputText value="#{msg.enroll_provide_external_account}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<h:panelGroup layout="block" styleClass="pure-control-group" id="accountBindingIdGroup">
+							<h:outputLabel for="accountBindingId" value="#{msg.enroll_EAB} *" />
+							<h:inputText id="accountBindingId" value="#{enrollMakeNewRequestBean.accountBindingId}" 
+								styleClass="#{component.valid?'':'jsAutoFocusError'}" autocomplete="off">
+								<f:ajax event="keyup" execute="@this" 
+										render="accountBindingIdGroupAuto" 
+										listener="#{enrollMakeNewRequestBean.autoCompleteEabId}"/>
+							</h:inputText>
+							<h:panelGroup layout="block" styleClass="pure-control-group" id="accountBindingIdGroupAuto">
+								<h:selectOneMenu id="accountBindingIdAutoComplete" style="width: 25%; margin-left: 1px;"
+										value="#{enrollMakeNewRequestBean.eabIdAutoComplete}"
+										rendered="#{enrollMakeNewRequestBean.hasEabIdAutoCompleteSelectItems}">
+										<f:selectItems value="#{enrollMakeNewRequestBean.eabIdAutoCompleteSelectItems}"/>
+										<f:ajax event="change" execute="@this" render="accountBindingIdGroup"
+											listener="#{enrollMakeNewRequestBean.setAutoCompleteForEabId}"/>
+										<f:validateRequired/>
+								</h:selectOneMenu>
+							</h:panelGroup>
+							<h:message for="accountBindingId" id="accountBindingIdMessage" styleClass="validationErrorMessage showErrorMessage"/>
+						</h:panelGroup>
+					</h:panelGroup>
+				</h:panelGroup>
+
+				<h:panelGroup layout="block" id="sshEnrollmentBlock" rendered="#{enrollMakeNewRequestBean.renderSshEnrolmentFields}">
+					<h2>
+						<h:outputText value="#{msg.enroll_ssh_data}" />
+					</h2>
+					
+					<h:panelGroup layout="block" styleClass="internal-frame" id="sshCertificateDataGroup">
+						
+						<h:panelGroup layout="block" styleClass="pure-control-group">
+							<h:outputLabel for="sshKeyId" value="#{msg.enroll_ssh_key_id} *" />
+							<h:inputText id="sshKeyId" value="#{enrollMakeNewRequestBean.sshKeyId}" 
+								requirred="#{enrollMakeNewRequestBean.requiredCriticalOptionsSourceAddress}" 
+								requiredMessage="#{msg.enroll_ssh_keyid_required}"
+								autocomplete="off">
+							</h:inputText>
+							<h:message for="sshKeyId" id="sshKeyIdMessage" styleClass="validationErrorMessage showErrorMessage"/>
+						</h:panelGroup>
+						
+						<h:panelGroup layout="block" styleClass="pure-control-group">
+							<h:outputLabel for="sshCertificateComment" value="#{msg.enroll_ssh_comment}" />
+							<h:inputText id="sshCertificateComment" value="#{enrollMakeNewRequestBean.sshCertificateComment}" 
+								autocomplete="off">
+							</h:inputText>
+						</h:panelGroup>
+						
+						<h:panelGroup id="sshPrincipalsSection" layout="block">
+						    <h3>
+						        <h:outputText value="#{msg.enroll_ssh_principals}" rendered="#{enrollMakeNewRequestBean.sshPrincipals.size() gt 0}"/>
+						    </h3>
+						    <h:panelGroup layout="block" styleClass="internal-frame-with-left-margin"  rendered="#{enrollMakeNewRequestBean.sshPrincipals.size() gt 0}">
+						        <ui:repeat id="sshPrincipal"
+						            value="#{enrollMakeNewRequestBean.sshPrincipals}"
+						            var="instance"
+						            varStatus="loop">
+						            <h:panelGroup layout="block" styleClass="pure-control-group">
+						                <h:outputLabel for="sshPrincipalField"
+						                    value="#{msg.enroll_ssh_principal} "
+						                    rendered="#{!instance.required}" />
+						                <h:outputLabel for="sshPrincipalField"
+						                    value="#{msg.enroll_ssh_principal} *"
+						                    rendered="#{instance.required}" />
+						                <h:inputText id="sshPrincipalField" value="#{instance.value}" 
+						                	styleClass="jsDelayKeyUp jsAutoFocusFirst #{component.valid?'':'jsAutoFocusError'}"
+						                     rendered="#{instance.modifiable}">
+						                    <f:validator validatorId="extendedRegexValidator" />
+						                    <f:attribute name="pattern" value="#{instance.regexPatternRequired ? instance.regexPattern : ''}"/>
+						                    <f:validator validatorId="extendedRequiredValidator"/>
+						                    <f:attribute name="_required" value="#{instance.required}"/>
+						                    <f:attribute name="_label" value="#{instance.name}"/>
+						                    <f:ajax event="keyup" execute="@this"
+						                        render=":requestInfoForm:requestPreviewOuterPanel sshPrincipalFieldMessage"/>
+						                </h:inputText>
+						                 <h:outputText id="sshPrincipalField2" value="#{instance.value}" 
+						                     rendered="#{!instance.modifiable}"/>
+						                <h:message for="sshPrincipalField" id="sshPrincipalFieldMessage" styleClass="sshPrincipalErrorMessage" 
+						                	errorClass="sshPrincipalErrorMessage showErrorMessage"/>
+						            </h:panelGroup>
+						        </ui:repeat>
+						    </h:panelGroup>
+						</h:panelGroup>
+						
+						<h:panelGroup layout="block" styleClass="pure-control-group">
+							<h:outputLabel for="criticalOptionsSourceAddress" value="#{msg.enroll_ssh_critical_source_address}" 
+								rendered="#{!enrollMakeNewRequestBean.requiredCriticalOptionsSourceAddress}"/>
+							<h:outputLabel for="criticalOptionsSourceAddress" value="#{msg.enroll_ssh_critical_source_address} *" 
+								rendered="#{enrollMakeNewRequestBean.requiredCriticalOptionsSourceAddress}"/>
+							<h:inputText id="criticalOptionsSourceAddress" value="#{enrollMakeNewRequestBean.criticalOptionsSourceAddress}" 
+								rendered="#{enrollMakeNewRequestBean.modifiableCriticalOptionsSourceAddress}"
+								requirred="#{enrollMakeNewRequestBean.requiredCriticalOptionsSourceAddress}" 
+								requiredMessage="#{msg.enroll_ssh_option_required}">
+							</h:inputText>
+							<h:outputText id="criticalOptionsSourceAddress2" value="#{enrollMakeNewRequestBean.criticalOptionsSourceAddress}" 
+								rendered="#{!enrollMakeNewRequestBean.modifiableCriticalOptionsSourceAddress}"
+								/>
+                            <h:message for="criticalOptionsSourceAddress" id="critcialOptionSourceAddressMessage" styleClass="validationErrorMessage showErrorMessage"/>
+						</h:panelGroup>
+						
+						<h:panelGroup layout="block" styleClass="pure-control-group">
+							<h:outputLabel for="criticalOptionsForceCommand" value="#{msg.enroll_ssh_critical_force_command}" 
+								rendered="#{!enrollMakeNewRequestBean.requiredCriticalOptionsForceCommand}"/>
+							<h:outputLabel for="criticalOptionsForceCommand" value="#{msg.enroll_ssh_critical_force_command} *" 
+								rendered="#{enrollMakeNewRequestBean.requiredCriticalOptionsForceCommand}"/>
+							<h:inputText id="criticalOptionsForceCommand" value="#{enrollMakeNewRequestBean.criticalOptionsForceCommand}" 
+								rendered="#{enrollMakeNewRequestBean.modifiableCriticalOptionsForceCommand}"
+								requirred="#{enrollMakeNewRequestBean.requiredCriticalOptionsForceCommand}" 
+								requiredMessage="#{msg.enroll_ssh_option_required}">
+							</h:inputText>
+							<h:outputText id="criticalOptionsForceCommand2" value="#{enrollMakeNewRequestBean.criticalOptionsForceCommand}" 
+								rendered="#{!enrollMakeNewRequestBean.modifiableCriticalOptionsForceCommand}"
+								/>
+                            <h:message for="criticalOptionsForceCommand" id="critcialOptionForceCommandMessage" styleClass="validationErrorMessage showErrorMessage"/>
+						</h:panelGroup>
+						
+						<!-- <h:panelGroup layout="block" styleClass="pure-control-group" 
+									rendered="#{enrollMakeNewRequestBean.renderedSshAdditionalExtensions}" >
+								<h:outputLabel for="sshAdditionalExtensions"
+									value="#{msg.enroll_ssh_additional_extensions}" />
+								<h:inputTextarea id="sshAdditionalExtensions" rows="4" cols="38"
+										value="#{enrollMakeNewRequestBean.sshAdditionalExtensions}">
+	                                 </h:inputTextarea>
+	                    </h:panelGroup> -->
+					</h:panelGroup>
+					
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" id="otherBlock" 
+					rendered="#{enrollMakeNewRequestBean.otherDataRendered}">
+					<h2>
+						<h:outputText value="#{msg.enroll_other_data}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<h:panelGroup layout="block" styleClass="pure-control-group" id="otherDataGroup">
+							<h:outputLabel for="sendNotification" value="#{msg.enroll_notification}" />
+							<h:selectBooleanCheckbox id="sendNotification" disabled="#{enrollMakeNewRequestBean.sendNotificationDisabled}"
+													 value="#{enrollMakeNewRequestBean.sendNotification}" >
+								<f:ajax event="change" render="emailBlock"></f:ajax>
+							</h:selectBooleanCheckbox>
+						</h:panelGroup>
+					</h:panelGroup>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" id="userCredentialsOuterPanel" rendered="#{enrollMakeNewRequestBean.provideUserCredentialsRendered}">
+					<h2>
+						<h:outputText value="#{msg.enroll_provide_user_credentials}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<fieldset>
+							<h:panelGroup layout="block" styleClass="pure-control-group"
+								rendered="#{enrollMakeNewRequestBean.usernameRendered}">
+								<h:outputLabel for="usernameField"
+									value="#{msg.enroll_username} *" />
+								<h:inputText id="usernameField"
+									styleClass="#{enrollMakeNewRequestBean.endEntityProfile.username.instances.get(0).required ? 'required-input' : ''}"
+									value="#{enrollMakeNewRequestBean.endEntityInformation.username}">
+									<f:ajax event="change" execute="@this"
+										listener="#{enrollMakeNewRequestBean.checkUserCredentials}"
+										render=":requestInfoForm:userCredentialsMessage" />
+									<f:validator validatorId="extendedRequiredValidator"/>
+									<f:attribute name="_required" value="true"/>
+								</h:inputText>
+								<h:message for="usernameField" id="usernameFieldMessage" styleClass="validationErrorMessage showErrorMessage"/>
+							</h:panelGroup>
+							<f:event type="postValidate" listener="#{enrollMakeNewRequestBean.validatePassword}"/>
+							<h:panelGroup layout="block" styleClass="pure-control-group"
+								rendered="#{enrollMakeNewRequestBean.passwordRendered}">
+								<h:outputLabel for="passwordField" value="#{msg.enroll_password} *" />
+								<h:inputSecret id="passwordField" value="#{enrollMakeNewRequestBean.endEntityInformation.password}" styleClass="#{component.valid?'':'jsAutoFocusError'}" autocomplete="off">
+									<f:validator validatorId="extendedRequiredValidator"/>
+									<f:attribute name="_required" value="true"/>
+								</h:inputSecret>
+								<h:message for="passwordField" id="passwordFieldMessage" styleClass="validationErrorMessage showErrorMessage"/>
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.passwordRendered}">
+								<h:outputLabel for="passwordConfirmField" value="#{msg.enroll_confirm_password} *" />
+								<h:inputSecret id="passwordConfirmField" binding="#{enrollMakeNewRequestBean.confirmPasswordComponent}" value="#{enrollMakeNewRequestBean.confirmPassword}" styleClass="#{component.valid?'':'jsAutoFocusError'}" autocomplete="off">
+									<f:validator validatorId="extendedRequiredValidator"/>
+									<f:attribute name="_required" value="true"/>
+								</h:inputSecret>
+								<h:message for="passwordConfirmField" id="passwordConfirmFieldMessage" styleClass="validationErrorMessage showErrorMessage"/>
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.passwordRendered}">
+								<h:outputLabel for="passwordClearPassword" value="#{msg.component_eedetails_field_cleartextpassword}"/>
+								<h:selectBooleanCheckbox id="passwordClearPassword" disabled="true"
+														 value="#{enrollMakeNewRequestBean.clearPassword}" />
+							</h:panelGroup>
+							<h:panelGroup layout="block" styleClass="pure-control-group" rendered="#{enrollMakeNewRequestBean.emailRendered}" id="emailBlock">
+								<h:outputLabel for="emailField" value="#{msg.enroll_email}" />
+								<h:inputText id="emailField" value="#{enrollMakeNewRequestBean.endEntityInformation.email}" styleClass="#{component.valid?'':'jsAutoFocusError'}" 
+									required="#{enrollMakeNewRequestBean.emailRequired}">
+									<f:ajax event="change" render=":requestInfoForm:requestPreviewOuterPanel" listener="#{enrollMakeNewRequestBean.updateRfcAltName}"/>
+									<f:ajax event="keyup" render=":requestInfoForm:requestPreviewOuterPanel" listener="#{enrollMakeNewRequestBean.updateRfcAltName}"/>
+								</h:inputText>
+								<h:message for="emailField" id="emailFieldMessage" styleClass="validationErrorMessage showErrorMessage"/>
+							</h:panelGroup>
+						</fieldset>
+						<h:inputHidden id="userCredentialsMessageInput" binding="#{enrollMakeNewRequestBean.userCredentialsMessagesComponent}"/>
+						<h:message for="userCredentialsMessageInput" id="userCredentialsMessage" errorClass="showErrorMessage"/>
+					</h:panelGroup>
+				</h:panelGroup>
+				
+				<h:panelGroup layout="block" id="requestPreviewOuterPanel" rendered="#{enrollMakeNewRequestBean.confirmRequestRendered}">
+					<h2>
+						<h:outputText value="#{msg.enroll_confirm_request}" />
+					</h2>
+					<h:panelGroup layout="block" styleClass="internal-frame">
+						<component:requestpreview
+							raRequestPreview="#{enrollMakeNewRequestBean.requestPreview}"/>
+						<h:commandButton id="requestPreviewMoreDetails"
+							action="#{enrollMakeNewRequestBean.renderRequestPreviewMoreToggle}"
+							actionListener="#{enrollMakeNewRequestBean.checkUserCredentials}"
+							value="#{enrollMakeNewRequestBean.requestPreviewMoreDetails ? msg.enroll_render_non_modifiable_button_hide : msg.enroll_render_non_modifiable_button_show}"
+							styleClass="#{htmlElementFocusBean.requestPreviewMoreDetails?'jsAutoFocusJsf':''} toggleMoreButton" immediate="true">
+							<f:actionListener binding="#{htmlElementFocusBean.setRequestPreviewMoreDetails(true)}"/>
+							<f:ajax execute="@this" render=":requestInfoForm:requestPreviewOuterPanel" />
+						</h:commandButton>
+						<!-- ECA-5848 -->
+						<br />
+						<h:commandButton 
+						    id="editValidityButton"
+						    action="#{enrollMakeNewRequestBean.renderSetCustomValidityToggle}"
+						    value="#{enrollMakeNewRequestBean.setCustomValidity ? msg.enroll_use_default_validity : msg.enroll_edit_validity}"
+			     	        styleClass="#{htmlElementFocusBean.requestPreviewMoreDetails?'jsAutoFocusJsf':''} toggleMoreButton" 
+			                immediate="true"
+			 		        rendered="#{enrollMakeNewRequestBean.validityOverrideEnabled}">
+					        <f:ajax execute="@this" render="@this :requestInfoForm:editValidityPanel :requestInfoForm:enrollButtons" />
+						</h:commandButton>
+						<h:panelGroup 
+						    id="editValidityPanel"
+						    styleClass="pure-control-group">
+						    <h3>
+                                <h:outputText value="#{msg.enroll_custom_values}" rendered="#{enrollMakeNewRequestBean.setCustomValidity}" />
+                            </h3>
+						    <h:outputLabel 
+						        for="validityField" 
+						        value="#{msg.enroll_set_validity}"
+						        rendered="#{enrollMakeNewRequestBean.setCustomValidity}" />
+						    <h:inputText
+						        id="validityField"
+						        styleClass="required-input"
+						        autocomplete="off"
+						        binding="#{enrollMakeNewRequestBean.validityInputComponent}"
+						        rendered="#{enrollMakeNewRequestBean.setCustomValidity}"
+						        value="#{enrollMakeNewRequestBean.validity}">
+						        <f:ajax event="keyup" render=":requestInfoForm:enrollButtons validityFieldHelpText" execute="@this" /> 
+						    </h:inputText>
+						    <h:outputText 
+						        id="validityFieldHelpText" 
+						        for="validityField"
+						        styleClass="showErrorMessage"
+						        rendered="#{enrollMakeNewRequestBean.setCustomValidity}"
+						        value="#{enrollMakeNewRequestBean.validityHelpMessage}" />
+						</h:panelGroup>
+						
+						<h:panelGroup 
+						    id="enrollButtons"
+						    layout="block"
+							styleClass="keygeneration-button-group">
+							<h:commandButton id="addEndEntity"
+								value="#{msg.enroll_add_end_endtity}"
+								action="#{enrollMakeNewRequestBean.addEndEntity}"
+								rendered="#{enrollMakeNewRequestBean.addEndEntityButtonRendered}"
+                                disabled="#{!(enrollMakeNewRequestBean.renderSshEnrolmentFields or enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent) or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generateSshPub"
+								value="#{msg.enroll_ssh_pub_key}"
+								action="#{enrollMakeNewRequestBean.downloadSshCertificate}"
+								rendered="#{enrollMakeNewRequestBean.renderedDownloadSshCertificate}"
+                                disabled="#{!enrollMakeNewRequestBean.enabledDownloadSshCertificate}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generateJks"
+								value="#{msg.enroll_generate_jks}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGenerateJks}"
+								rendered="#{enrollMakeNewRequestBean.generateJksButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generateP12"
+								value="#{msg.enroll_generate_p12}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGenerateP12}"
+								rendered="#{enrollMakeNewRequestBean.generateP12ButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generateBcfks"
+											 value="#{msg.enroll_generate_bcfks}"
+											 action="#{enrollMakeNewRequestBean.addEndEntityAndgenerateBcfks}"
+											 rendered="#{enrollMakeNewRequestBean.generateBcfksButtonRendered}"
+											 disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+											 styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generateKeyStorePem"
+								value="#{msg.enroll_generate_pem}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGeneratePem}"
+								rendered="#{enrollMakeNewRequestBean.generatePemButtonRendered  and not enrollMakeNewRequestBean.keyRecoverableUse}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generatePem"
+								value="#{msg.enroll_generate_pem}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGenerateCertificatePem}"
+								rendered="#{enrollMakeNewRequestBean.generateFromCsrButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generatePemFullChain"
+								value="#{msg.enroll_generate_pem_full_chain}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGenerateCertificatePemFullChain}"
+								rendered="#{enrollMakeNewRequestBean.generateFromCsrButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generatePkcs7"
+								value="#{msg.enroll_generate_pkcs7}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGenerateCertificatePkcs7}"
+								rendered="#{enrollMakeNewRequestBean.generateFromCsrButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="generateDer"
+								value="#{msg.enroll_generate_der}"
+								action="#{enrollMakeNewRequestBean.addEndEntityAndGenerateCertificateDer}"
+								rendered="#{enrollMakeNewRequestBean.generateFromCsrButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+							<h:commandButton id="confirmRequestButton" value="#{msg.enroll_confirm_request}"
+								action="#{enrollMakeNewRequestBean.confirmRequest}"
+								rendered="#{enrollMakeNewRequestBean.confirmRequestButtonRendered}"
+                                disabled="#{!enrollMakeNewRequestBean.requestPreview.anyRequestDataPresent or !enrollMakeNewRequestBean.validityValid}"
+								styleClass="pure-button ra-button">
+								<f:param name="validationRequiredFromRequest" value="true" />
+							</h:commandButton>
+						</h:panelGroup>
+					</h:panelGroup>
+				</h:panelGroup>
+
+                <h:panelGroup layout="block" styleClass="internal-frame-black" rendered="#{enrollMakeNewRequestBean.requestIdInfoRendered}">
+					<h:panelGroup layout="block" styleClass="keygeneration-button-group">
+						<h:outputText value="#{msg.enroll_request_was_successfully_sent}" />
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="keygeneration-button-group">
+						<h:outputText value="#{msg.enroll_request_id}:&nbsp;" />
+						<h:outputText value="#{enrollMakeNewRequestBean.requestId}" />
+					</h:panelGroup>
+					<h:panelGroup layout="block" styleClass="keygeneration-button-group">
+						<h:outputLink value="enrollwithrequestid.xhtml" id="useRequestIdLink" styleClass="jsAutoFocusFirst">
+							<h:outputText value="#{msg.menu_pagetitle_enroll_use_request_id}&nbsp;&gt;&gt;" />
+							<f:param name="#{enrollMakeNewRequestBean.paramRequestId}" value="#{enrollMakeNewRequestBean.requestId}" />
+						</h:outputLink>
+					</h:panelGroup>
+                </h:panelGroup>
+                
+				<h:panelGroup layout="block" id="navigationButtonGroup"
+					styleClass="navigation-button-group">
+					<h:commandButton id="resetButton" value="#{msg.generic_reset}"
+						styleClass="pure-button ra-button"
+						action="#{enrollMakeNewRequestBean.reset}" immediate="true">
+					</h:commandButton>
+				</h:panelGroup>
+                <script>ejbca.ra.touchUpDocument(); ejbca.ra.handleAutoFocus();</script>
+			</h:form>
+		</h:panelGroup>
+	</ui:define>
+</ui:composition>
+</html>

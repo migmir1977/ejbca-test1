@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:f="http://xmlns.jcp.org/jsf/core"
+	  xmlns:h="http://xmlns.jcp.org/jsf/html"
+	  xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+	  xmlns:t="http://myfaces.apache.org/tomahawk">
+<ui:remove>
+	<!--
+  /*************************************************************************
+   *                                                                       *
+   *  EJBCA: The OpenSource Certificate Authority                          *
+   *                                                                       *
+   *  This software is free software; you can redistribute it and/or       *
+   *  modify it under the terms of the GNU Lesser General Public           *
+   *  License as published by the Free Software Foundation; either         *
+   *  version 2.1 of the License, or any later version.                    *
+   *                                                                       *
+   *  See terms of license at gnu.org.                                     *
+   *                                                                       *
+   *************************************************************************/
+    -->
+</ui:remove>
+
+<ui:composition template="/WEB-INF/include/template.xhtml">
+	<ui:param name="resourceBean" value="#{remoteAuthenticationMBean}" />
+	<ui:define name="content">
+
+		<h:outputText value="" rendered="#{remoteAuthenticationMBean.pageLoadResetTrigger}"/>
+		<h1>
+			<h:outputText value="#{web.text.INTERNALKEYBINDING_TYPE_REMOTE}"/>
+			<h:outputText value="#{web.ejbcaWebBean.getHelpReference('/Remote_Authenticators_Overview.html')}" escape="false"/>
+		</h1>
+		<br/>
+		<h:panelGroup styleClass="section-label-span">
+			<h:outputText  value="#{web.text.INTERNALKEYBINDING_AUTHENTICATIONKEYBINDING_DESCRIPTION}"/>
+		</h:panelGroup>
+		<h:form id="internalkeybindings">
+			<h:dataTable value="#{remoteAuthenticationMBean.internalKeyBindingGuiList}" var="guiInfo"
+						 styleClass="grid" style="border-collapse: collapse; right: auto; left: auto">
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_NAME}"/></f:facet>
+					<h:outputLink
+							value="keybinding.xhtml?internalKeyBindingId=#{guiInfo.internalKeyBindingId}">
+						<h:outputText value="#{guiInfo.name}" title="#{web.text.INTERNALKEYBINDING_VIEWWITH} #{guiInfo.internalKeyBindingId}"/>
+					</h:outputLink>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_CERTIFICATEISSUER}"/></f:facet>
+					<h:outputLink value="/ejbca/adminweb/viewcertificate.xhtml" rendered="#{guiInfo.certificateBound}">
+						<f:param name="certsernoparameter" value="#{guiInfo.caCertificateSerialNumber},#{guiInfo.caCertificateIssuerDn}"/>
+						<f:param name="returnTo" value="'3'"/>
+						<h:outputText value="#{guiInfo.certificateInternalCaName}" rendered="#{guiInfo.issuedByInternalCa}"/>
+						<h:outputText value="#{guiInfo.certificateIssuerDn}" rendered="#{!guiInfo.issuedByInternalCa}"/>
+					</h:outputLink>
+					<h:outputText value="#{web.text.INTERNALKEYBINDING_NOT_PRESENT}" rendered="#{!guiInfo.certificateBound}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_CERTIFICATESERIAL}"/></f:facet>
+					<h:outputLink value="/ejbca/adminweb/viewcertificate.xhtml" rendered="#{guiInfo.certificateBound}">
+						<f:param name="certsernoparameter" value="#{guiInfo.certificateSerialNumber},#{guiInfo.certificateIssuerDn}"/>
+						<f:param name="returnTo" value="'3'"/>
+						<h:outputText style="font-family: monospace; text-align: right;" value="#{guiInfo.certificateSerialNumber}"/>
+					</h:outputLink>
+					<h:outputText value="#{web.text.INTERNALKEYBINDING_NOT_PRESENT}" rendered="#{!guiInfo.certificateBound}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_CRYPTOTOKEN}"/></f:facet>
+					<h:outputLink value="/ejbca/adminweb/cryptotoken/cryptotoken.jsf?cryptoTokenId=#{guiInfo.cryptoTokenId}&amp;ref=keybindings">
+						<h:outputText value="#{guiInfo.cryptoTokenName}" title="#{web.text.CRYPTOTOKEN_VIEWWITH} #{guiInfo.cryptoTokenId}"/>
+					</h:outputLink>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_KEYPAIRALIAS}"/></f:facet>
+					<h:outputText value="#{guiInfo.keyPairAlias}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_NEXTKEYPAIRALIAS}"/></f:facet>
+					<h:outputText rendered="#{guiInfo.nextKeyAliasAvailable}" value="#{guiInfo.nextKeyPairAlias}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_STATUS}"/></f:facet>
+					<h:outputText value="#{web.text[guiInfo.status]}"/>
+				</h:column>
+				<h:column>
+					<f:facet name="header"><h:outputText value="#{web.text.INTERNALKEYBINDING_OPERATIONAL_STATUS}"/></f:facet>
+					<h:graphicImage height="16" width="16" url="#{guiInfo.operationalStatus}" />
+				</h:column>
+				<h:column rendered="#{!remoteAuthenticationMBean.forbiddenToEdit}">
+					<f:facet name="header">
+						<h:outputText value="#{web.text.INTERNALKEYBINDING_ACTIONS}"/>
+					</f:facet>
+					<h:commandButton rendered="#{guiInfo.status ne 'INTERNALKEYBINDING_STATUS_DISABLED'}" action="#{remoteAuthenticationMBean.commandDisable}"
+									 value="#{web.text.INTERNALKEYBINDING_DISABLE_SHORT}" title="#{web.text.INTERNALKEYBINDING_DISABLE_FULL}" disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+					<h:commandButton rendered="#{guiInfo.status eq 'INTERNALKEYBINDING_STATUS_DISABLED'}" action="#{remoteAuthenticationMBean.commandEnable}"
+									 value="#{web.text.INTERNALKEYBINDING_ENABLE_SHORT}" title="#{web.text.INTERNALKEYBINDING_ENABLE_FULL}" disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+					<h:commandButton action="#{remoteAuthenticationMBean.commandDelete}"
+									 value="#{web.text.INTERNALKEYBINDING_DELETE_SHORT}" title="#{web.text.INTERNALKEYBINDING_DELETE_FULL}"
+									 onclick="return confirm('#{web.text.INTERNALKEYBINDING_CONF_DELETE}')" disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+					<h:commandButton rendered="#{!guiInfo.nextKeyAliasAvailable and guiInfo.authorizedToGenerateKeys}"
+									 action="#{remoteAuthenticationMBean.commandGenerateNewKey}"
+									 value="#{web.text.INTERNALKEYBINDING_GENERATENEWKEY_SHORT}" title="#{web.text.INTERNALKEYBINDING_GENERATENEWKEY_FULL}"
+									 disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+					<h:commandButton rendered="#{guiInfo.authorizedToCryptoToken}" action="#{remoteAuthenticationMBean.commandGenerateRequest}"
+									 value="#{web.text.INTERNALKEYBINDING_GETCSR_SHORT}" title="#{web.text.INTERNALKEYBINDING_GETCSR_FULL}"
+									 disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+					<h:commandButton action="#{remoteAuthenticationMBean.commandReloadCertificate}"
+									 value="#{web.text.INTERNALKEYBINDING_RELOADCERTIFICATE_SHORT}" title="#{web.text.INTERNALKEYBINDING_RELOADCERTIFICATE_FULL}"
+									 disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+					<h:commandButton rendered="#{guiInfo.issuedByInternalCa}" action="#{remoteAuthenticationMBean.commandRenewCertificate}"
+									 value="#{web.text.INTERNALKEYBINDING_RENEWCERTIFICATE_SHORT}" title="#{web.text.INTERNALKEYBINDING_RENEWCERTIFICATE_FULL}"
+									 disabled="#{remoteAuthenticationMBean.forbiddenToEdit}"/>
+				</h:column>
+			</h:dataTable>
+			<br/>
+			<h:outputLink
+					value="keybinding.xhtml?internalKeyBindingId=0" rendered="#{remoteAuthenticationMBean.allowedToEdit}">
+				<h:outputText value="#{web.text.INTERNALKEYBINDING_CREATENEW}"/>
+			</h:outputLink>
+		</h:form>
+		<h:form id="uploadCertificate" enctype="multipart/form-data" rendered="#{not empty remoteAuthenticationMBean.uploadTargets and remoteAuthenticationMBean.allowedToEdit}">
+			<h3><h:outputText value="#{web.text.INTERNALKEYBINDING_REMOTE_UPLOADHEADER}"/></h3>
+			<h:panelGrid columns="3">
+				<h:panelGroup>
+					<h:outputLabel for="certificateUploadTarget" value="#{web.text.INTERNALKEYBINDING_REMOTE_UPLOAD_TARGET}: "/>
+					<h:selectOneMenu id="certificateUploadTarget" value="#{remoteAuthenticationMBean.uploadTarget}">
+						<f:selectItems value="#{remoteAuthenticationMBean.uploadTargets}"/>
+					</h:selectOneMenu>
+				</h:panelGroup>
+				<h:panelGroup>
+					<h:outputLabel for="certificateUploadInput" value="#{web.text.INTERNALKEYBINDING_UPLOAD_CERTIFICATE}: "/>
+					<h:inputFile id="certificateUploadInput" value="#{remoteAuthenticationMBean.uploadToTargetFile}">
+						<f:validator validatorId="keyBindingFileUploadValidator"/>
+					</h:inputFile>
+				</h:panelGroup>
+				<h:commandButton action="#{remoteAuthenticationMBean.uploadToTarget}" value="#{web.text.INTERNALKEYBINDING_UPLOAD}"/>
+			</h:panelGrid>
+		</h:form>
+
+		
+	</ui:define>
+</ui:composition>
+</html>

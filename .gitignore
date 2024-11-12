@@ -1,0 +1,15 @@
+out/
+/p12/
+dist/
+build*/
+tmp/
+conf/*.properties
+velocity.log
+src/java/jndi.properties
+validationtool.log
+reports/
+modules/ra-gui/resources/js/jquery.min.js
+/.DS_Store
+.vscode/
+/.tern-project
+*.iml

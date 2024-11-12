@@ -1,0 +1,202 @@
+# ------------ OCSP responder configuration ---------------------
+# These configurations are used both for EJBCA and the Validation Authority (VA).
+#
+# These values are used for OCSP responses signed by a CA and as defaults for delegated OCSP signing by OcspKeyBindings.
+# Certificate Profile or URL specific configuration here will still override the configured values of an OcspKeyBinding.
+
+# OCSP servlet enabled. If false there will be no servlet.
+# Default is true.
+#ocsp.enabled=false
+
+# Context root (the path in the URL)
+# Default is '/${app.name}/publicweb/status'
+#ocsp.contextroot=/status
+
+# If set to false the OCSP responses will only contain the signature certificate (if ocsp.includesignercertinresponse is set to 'true'), 
+# and not the whole certificate chain of the OCSP responder.
+# Default true.
+#ocsp.includecertchain=true
+
+# If set to false, the  OCSP response will not contain the signing certificate.
+# Default true 
+#ocsp.includesignercert=true
+
+# Specifies which signature algorithms can be used in OCSP responses. You can specify several algorithm
+# separated by ';'. If RSA keys are used in the OCSP signing certificate, the algorithm with RSA will be used, and
+# if ECDSA keys are used in the OCSP signing certificate, the algorithm with ECDSA will be used and if 
+# DSA keys are used in the OCSP signing certificate, the algorithm with DSA will be used.
+#
+# Default: SHA256WithRSA;SHA256withRSAandMGF1;SHA384WithRSA;SHA512WithRSA;SHA224withECDSA;SHA256withECDSA;SHA384withECDSA;SHA512withECDSA;SHA1WithDSA;Ed25519;Ed448
+#ocsp.signaturealgorithm=SHA256WithRSA;SHA256withRSAandMGF1;SHA384WithRSA;SHA512WithRSA;SHA224withECDSA;SHA256withECDSA;SHA384withECDSA;SHA512withECDSA;SHA1WithDSA;Ed25519;Ed448
+
+# The interval on which the the OCSP signing certificates are updated in seconds.
+# If set to 0 or negative these certificate are never updated.
+# Default: 300
+#ocsp.signingCertsValidTime=0
+
+# When a signing certificate is about to expire a WARN message could be written to log4j each time the key of the certificate is used.
+# This property defines when this message is started to be written.
+# The property is set to the number of seconds before the expiration that the WARN message starts to be written.
+# If set to 0 the warning is disabled.
+# Default: 604800 (1 week)
+#ocsp.warningBeforeExpirationTime=10000
+
+# If true a certificate that does not exist in the database, but is issued by a CA the responder handles
+# will be treated as not revoked. Default (when value is false) is to treat is as "unknown". Since the OCSP responders database normally contains all issued certificate
+# this gives sensible values (in line with RFC6960) to "ok", "revoked" and "unknown" certificates.
+#
+# Setting this value to true is useful if you want an External OCSP responder database to only contain revoked certificates, and not
+# all certificates. In this case the responder will answer "ok" to requests for certificates that do not exist in the database. 
+# If both 'ocsp.nonexistingisgood' and 'ocsp.nonexistingisrevoked' are set to 'true', the responder will answer "ok".
+#
+# Note that for standard OCSP responders this value is set in the keybinding, so this configuration value acts as a default for CAs. 
+#
+# Default: false
+#ocsp.nonexistingisgood=false
+
+# Setting this value to true will cause CAs to respond with an unsigned "Unauthorized" response for unknown serial numbers. 
+#
+# Setting this value to true is not compatible with ocsp.nonexistingisgood or ocsp.nonexistingisrevoked
+#
+# Note that for standard OCSP responders this value is set in the keybinding, so this configuration value acts as a default for CAs. 
+#
+# Default: false
+#ocsp.nonexistingisunauthorized=false
+
+# The value of 'ocsp.nonexistingisgood=false' may be overridden if the URL that the client used to send the request is matching some regular expression.
+# The regular expressions that if any of them is fulfilled will override 'ocsp.nonexistingisgood=false' is numbered from 1 and up. It may be any numbers.
+# Here follows an example of 2:
+#ocsp.nonexistingisgood.uri.1=.*\\?thisEndingIsGood$
+#ocsp.nonexistingisgood.uri.2=^http://good.myhost.nu:8080/.*
+
+# The value of 'ocsp.nonexistingisgood=true' may be overridden if the URL that the client used to send the request is matching some regular expression.
+# The regular expressions that if any of them is fulfilled will override 'ocsp.nonexistingisgood=true' is numbered from 1 and up. It may be any numbers.
+# Here follows an example of 2:
+#ocsp.nonexistingisbad.uri.1=.*\\?thisEndingIsBad$
+#ocsp.nonexistingisbad.uri.2=^http://bad.myhost.nu:8080/.*
+
+# If true a certificate that does not exist in the database, but is issued by a CA the responder handles,
+# will be treated as revoked; the revocation reason will be "Certificate Hold" and the revocation time is January 1st, 1970 (compliant with RFC6960). 
+# Default (when this value and value of "Non existing is good" are false) is to treat it as "unknown".
+# If both "Non existing is good" and "Non existing is revoked", the responder will answer "ok".
+#
+# Note that for standard OCSP responders this value is set in the keybinding, so this configuration value acts as a default for CAs. 
+#
+# Default: false
+#ocsp.nonexistingisrevoked=false
+
+# The value of 'ocsp.nonexistingisrevoked=false' may be overridden if the URL that the client used to send the request is matching some regular expression.
+# The regular expressions that if any of them is fulfilled will override 'ocsp.nonexistingisrevoked=false' is numbered from 1 and up. It may be any numbers.
+# Here follows an example of 2:
+#ocsp.nonexistingisrevoked.uri.1=.*\\?thisEndingIsRevoked$
+#ocsp.nonexistingisrevoked.uri.2=^http://revoked.myhost.nu:8080/.*
+
+# For HTTP get requests according to RFC5019 we can set HTTP headers in the response to allow caching proxies to cache responses.
+# untilNextUpdate is the number of seconds a response will be valid. 0 = disable.
+# Default: 0
+#ocsp.untilNextUpdate = 0
+
+# You can also specify different nextUpdate values depending on which certificate profiles the certificate was issued by.
+# This only works when you have published using EJBCA 3.9.0 or later, where the certificateProfileId column in the CertificateData table is populated.
+# You can find the certificateProfileId (999 in the example below) in the CA UI.
+# If no specific certificateProfileId is specified the default value from ocsp.untilNextUpdate is used.
+#ocsp.999.untilNextUpdate = 50
+
+# For HTTP get requests according to RFC5019 we can set HTTP headers in the response to allow caching proxies to cache responses.
+# untilNextUpdate is the number of seconds a response will be valid. 0 = disable.
+# If this configuration is set, its value will override the global value in case of certificate with a revoked status..
+# Default: 0
+#ocsp.revoked.untilNextUpdate = 0
+
+# You can also specify different nextUpdate values depending on which certificate profiles the certificate was issued by.
+# This only works when you have published using EJBCA 3.9.0 or later, where the certificateProfileId column in the CertificateData table is populated.
+# You can find the certificateProfileId (999 in the example below) in the CA UI.
+# If no specific certificateProfileId is specified the default value from ocsp.untilNextUpdate is used.
+# If this configuration is set, its value will override the global value in case of certificate with a revoked status..
+#ocsp.999.revoked.untilNextUpdate = 50
+
+# For HTTP get requests according to RFC5019 we can set HTTP headers in the response to allow caching proxies to cache responses.
+# maxAge is how long a response will be cached, in seconds. Should be less than untilNextUpdate.
+# Ignored if untilNextUpdate is disabled. 0 = disable.
+# Note that for responses of certificates with unknown status, the HTTP response header "Cache-control" will not contain the max age, but 
+# "no-cache, must-revalidate" instead. That is to prevent caching of unknown status.
+# Default: 30
+#ocsp.maxAge = 30
+
+# Base 'Expires' cache header on max-age instead of than nextUpdate.
+# Enabling this is not compliant to RFC 5019 
+# Default: false
+#ocsp.expires.useMaxAge=false
+
+# You can also specify different maxAge values depending on which certificate profiles the certificate was issued by.
+# This only works when you have published using EJBCA 3.9.0 or later, where the certificateProfileId column in the CertificateData table is populated.
+# You can find the certificateProfileId (999 in the example below) in the CA UI.
+# If no specific certificateProfileId is specified the default value from ocsp.maxAge is used.
+#ocsp.999.maxAge = 100
+
+# For HTTP get requests according to RFC5019 we can set HTTP headers in the response to allow caching proxies to cache responses.
+# maxAge is how long a response will be cached, in seconds. Should be less than untilNextUpdate.
+# Ignored if untilNextUpdate is disabled. 0 = disable.
+# Note that for responses of certificates with unknown status, the HTTP response header "Cache-control" will not contain the max age, but 
+# "no-cache, must-revalidate" instead. That is to prevent caching of unknown status.
+# If this configuration is set, its value will override the global value in case of certificate with a revoked status.
+# Default: 30
+#ocsp.revoked.maxAge = 30
+
+# You can also specify different maxAge values depending on which certificate profiles the certificate was issued by.
+# This only works when you have published using EJBCA 3.9.0 or later, where the certificateProfileId column in the CertificateData table is populated.
+# You can find the certificateProfileId (999 in the example below) in the CA UI.
+# If no specific certificateProfileId is specified the default value from ocsp.maxAge is used.
+# If this configuration is set, its value will override the global value in case of certificate with a revoked status.
+#ocsp.999.revoked.maxAge = 100
+
+# Setting this to true will enable unidfnr extension in EJBCA.
+# Default is false since it is not normally used by many customers.
+# Prior to setting this to true the appropriate data source must be set in JBoss.
+#unidfnr.enabled=false
+
+# Specifies if the OCSP-responder should require signed requests or not.
+# If signature is required, the signature certificate must be issued by a CA handled by the OCSP responder.
+#
+# Default: false
+#ocsp.signaturerequired=false
+
+# Cache time of revocation checks of the OCSP request signer's certificate in milliseconds.
+# Set to 0 to never cache this revocation information.
+# Default: 60000
+#ocsp.reqsigncertrevcachetime=60000
+
+# Timeout setting for the Global OCSP configuration cache. Once the cache has timed out it will be reread from the 
+# database.
+#
+# Default: 30000ms 
+#ocspconfigurationcache.cachetime=30000
+
+#------------------- Re-keying used by external OCSP responder------------------------------
+# When this feature is enabled a new signing key will automatically be generated a specified time before the certificate of the used key expires.
+# A certificate for the new key will be fetched by WS from EJBCA.
+# You also need to configure an AuthenticationKeyBinding as client SSL credential. (It will be created for you
+# during upgrade to EJBCA 6.0.0 where a client SSL keystore existed previously.)
+
+# Password for rekeying via the servlet. 
+# Default: null
+#ocsp.rekeying.trigging.password=
+
+# URL to webservice from which the certificate for a newly generated OCSP responder key should be fetched.
+# The automatic re-keying feature is disabled if this property is not defined.
+# Default: null
+#ocsp.rekeying.wsurl = https://milton:8443/ejbca/ejbcaws/ejbcaws
+
+# Specifies how often the signing certificates should be checked. Default value is 3600 seconds, but consider lowering this value if signing certificates are expected
+# to be valid less than 24h 
+#ocsp.rekeying.update.time.in.seconds=
+
+# Specifies how much safety margin a certificate should have before it's updated, i.e when it should be considered a candidate for renewal. The effective
+# validity time for a signing certificate is it's actual validity minus this value. Timer will output warnings if this value is less than the update time.
+#
+# The default for this value is 24h 
+#ocsp.rekeying.safety.margin.in.seconds=
+
+# Limits what hosts may request a manual rekeying via web service. Multiple hosts may be separated with a semicolon. 
+# Default: 127.0.0.1
+#ocsp.rekeying.trigging.hosts=
