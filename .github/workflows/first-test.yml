@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: gryphusid1
+    runs-on: server-mm
 
     steps:
       - name: Checkout code
