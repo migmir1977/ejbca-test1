@@ -51,7 +51,7 @@ jobs:
             echo "FAILED_TESTS=$failed" >> $GITHUB_ENV            
 
       - name: Fail if too many tests failed
-        if: env.FAILED_TESTS > 1
+        if: env.FAILED_TESTS >= 1
         run: |
             echo "Build failed because more than 1 test failed."
             exit 1  
