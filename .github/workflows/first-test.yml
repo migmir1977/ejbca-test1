@@ -18,7 +18,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set branch context
-        run: echo "Triggered by branch: ${{ github.ref_name }}"
+        run: |
+          echo "Triggered by branch: ${{ github.ref_name }}"
 
       - name: Different behavior based on trigger and branch
         run: |
