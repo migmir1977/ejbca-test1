@@ -17,18 +17,3 @@ jobs:
       - name: Notify Mattermost
         run: echo "Sending Mattermost notification..."
 
-      - name: Notify Email        
-        uses: licenseware/send-email-notification@v1
-        with:
-          api-key: ${{ secrets.SENDGRID_API_KEY }}
-          subject: Test Subject
-          from-email: verified-email@licenseware.io
-          to-email: miguel.miranda@sapo.pt
-          markdown-body: |
-            # My Markdown Title
-
-            This is a description Build ${{ github.run_id }} for ${{ github.repository }} has completed with ${{ inputs.status }}.
-
-            ## Another header
-
-            Another description   ${{ inputs.status }}         
