@@ -22,7 +22,7 @@ jobs:
         with:
           api-key: ${{ secrets.SENDGRID_API_KEY }}
           subject: Test Subject
-          from-email: verified-email@licenseware.io
+          from-email: mianpimi@gmail.com
           to-email: miguel.miranda@sapo.pt
           markdown-body: |
             # My Markdown Title
