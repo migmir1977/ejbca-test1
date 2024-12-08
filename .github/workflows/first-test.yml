@@ -33,7 +33,7 @@ jobs:
       
       - name: Save Raw Test Results
         run: |
-            echo '[{"name": "Test1", "status": "passed"}, {"name": "Test2", "status": "failed"}, {"name": "Test3", "status": "skipped"}]' > test-results.json
+            echo '[{"name": "Test1", "status": "passed"}, {"name": "Test2", "status": "passed"}, {"name": "Test3", "status": "skipped"}]' > test-results.json
   
       - name: Summarize Test Results
         run: |
