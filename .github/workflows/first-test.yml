@@ -30,3 +30,19 @@ jobs:
           elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "Manual trigger by user on branch ${{ github.ref_name }}"
           fi
+      
+      - name: Save Raw Test Results
+        run: |
+            echo '[{"name": "Test1", "status": "passed"}, {"name": "Test2", "status": "failed"}, {"name": "Test3", "status": "skipped"}]' > test-results.json
+  
+      - name: Summarize Test Results
+        run: |
+            total=$(jq '. | length' test-results.json)
+            passed=$(jq '[.[] | select(.status=="passed")] | length' test-results.json)
+            failed=$(jq '[.[] | select(.status=="failed")] | length' test-results.json)
+            skipped=$(jq '[.[] | select(.status=="skipped")] | length' test-results.json)
+  
+            echo "### Test Summary" >> $GITHUB_STEP_SUMMARY
+            echo "| Total | Passed | Failed | Skipped |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|--------|--------|---------|" >> $GITHUB_STEP_SUMMARY
+            echo "| $total | $passed | $failed | $skipped |" >> $GITHUB_STEP_SUMMARY
