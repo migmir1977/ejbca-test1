@@ -1,0 +1,31 @@
+name: first action
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    workflow_dispatch:
+    schedule:
+      - cron: '0 1 * * *' #Run everyday at 01 AM UTC
+
+jobs:
+  build:
+    runs-on: gryphusid1
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set branch context
+        run: echo "Triggered by branch: ${{ github.ref_name }}"
+
+      - name: Different behavior based on trigger and branch
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "Running for a PR on branch ${{ github.head_ref }}"
+          elif [[ "${{ github.event_name }}" == "schedule" ]]; then
+            echo "Running on schedule for branch main"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "Manual trigger by user on branch ${{ github.ref_name }}"
+          fi
