@@ -1,4 +1,4 @@
-name: first action
+name: First action
 
 on:
   pull_request:
@@ -55,3 +55,8 @@ jobs:
         run: |
             echo "Build failed because more than 1 test failed."
             exit 1  
+  notify:
+    needs: build
+    uses: ./.github/workflows/notify.yml
+    with: 
+      status: ${{ needs.build.status }}
