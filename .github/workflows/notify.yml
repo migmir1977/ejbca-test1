@@ -15,7 +15,7 @@ jobs:
       - name: Mattermost notification
         run: |
           echo "Workflow completed with status: ${{ inputs.status }}."
-      - name: Notify Mattermost
+      - name: Notify Mattermos
         run: echo "Sending Mattermost notification ${{ vars.ZOHO_SMTP_SERVER }}..."
 
       - name: Email Zoho notification
@@ -23,6 +23,7 @@ jobs:
         with:
           smtp-server: ${{ vars.ZOHO_SMTP_SERVER }}
           smtp-port: ${{ vars.ZOHO_SMTP_PORT }}
+          smtp-secure: false
           from-email: ${{ vars.ZOHO_EMAIL_ADDRESS }}
           to-email: miguel.miranda@sapo.pt,mianpimi@gmail.com
           username: ${{ vars.ZOHO_USERNAME }}
