@@ -10,6 +10,7 @@ on:
 jobs:
   notify:
     runs-on: server-mm
+    environment: testing
     steps:
       - name: Mattermost notification
         run: |
