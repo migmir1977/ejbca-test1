@@ -23,7 +23,7 @@ jobs:
         with:
           smtp-server: ${{ vars.ZOHO_SMTP_SERVER }}
           smtp-port: ${{ vars.ZOHO_SMTP_PORT }}
-          smtp-secure: false
+          smtp-secure: true
           from-email: ${{ vars.ZOHO_EMAIL_ADDRESS }}
           to-email: miguel.miranda@sapo.pt,mianpimi@gmail.com
           username: ${{ vars.ZOHO_USERNAME }}
