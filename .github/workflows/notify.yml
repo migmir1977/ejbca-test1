@@ -34,7 +34,7 @@ jobs:
           from-email: ${{ vars.ZOHO_EMAIL_ADDRESS }}
           to-email: miguel.miranda@sapo.pt,mianpimi@gmail.com
           username: ${{ vars.ZOHO_USERNAME }}
-          password: ${{ vars.ZOHO_PASS_VAR }}
+          password: $ZOHO_PASS_VAR
           subject: Test Subject
           body: |
             This is a description Build ${{ github.run_id }} for ${{ github.repository }} has completed with ${{ inputs.status }}.
