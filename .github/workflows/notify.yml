@@ -18,7 +18,8 @@ jobs:
       - name: Notify Mattermos
         env: 
           ZOHO_PASS_VAR: ${{ secrets.ZOHO_PASS }}
-        run: echo "Sending Mattermost notification ${{ vars.ZOHO_USERNAME }} and $ZOHO_PASS_VAR ..."
+          ZOHO_USER: ${{ vars.ZOHO_USERNAME }}
+        run: echo "Sending Mattermost notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
 
       - name: Email Zoho notification
         uses: hilarion5/send-mail@v1
