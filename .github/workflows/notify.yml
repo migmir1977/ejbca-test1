@@ -26,6 +26,11 @@ jobs:
           echo "Send $MIGUEL_VAR ing  ${{ secrets.miguel }} Mat-${{ secrets.ZOHO_PASS }}-ter-$API_KEY-most  notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
 
       - name: Email Zoho notification
+        env: 
+          ZOHO_PASS_VAR: ${{ secrets.ZOHO_PASS }}
+          ZOHO_USER: ${{ vars.ZOHO_USERNAME }}
+          MIGUEL_VAR: ${{ secrets.miguel }}
+          API_KEY: ${{ secrets.API_KEY }}
         uses: hilarion5/send-mail@v1
         with:
           smtp-server: ${{ vars.ZOHO_SMTP_SERVER }}
