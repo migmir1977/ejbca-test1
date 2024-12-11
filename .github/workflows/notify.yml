@@ -16,7 +16,7 @@ jobs:
         run: |
           echo "Workflow completed with status: ${{ inputs.status }}."
       - name: Notify Mattermos
-        run: echo "Sending Mattermost notification ${{ vars.ZOHO_SMTP_SERVER }}..."
+        run: echo "Sending Mattermost notification ${{ vars.ZOHO_USERNAME }} and ${{ secrets.ZOHO_PASS }}..."
 
       - name: Email Zoho notification
         uses: hilarion5/send-mail@v1
