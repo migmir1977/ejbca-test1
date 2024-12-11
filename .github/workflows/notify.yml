@@ -23,7 +23,7 @@ jobs:
           MIGUEL_VAR: ${{ secrets.miguel }}
           API_KEY: ${{ secrets.API_KEY }}
         run: |
-          echo "Send $MIGUEL_VAR ing  ${{ secrets.miguel }} Matter-$API_KEY-most  notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
+          echo "Send $MIGUEL_VAR ing  ${{ secrets.miguel }} Mat-${{ secrets.ZOHO_PASS }}-ter-$API_KEY-most  notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
 
       - name: Email Zoho notification
         uses: hilarion5/send-mail@v1
