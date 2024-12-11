@@ -16,12 +16,14 @@ jobs:
       - name: Mattermost notification
         run: |
           echo "Workflow completed with status: ${{ inputs.status }}."
-      - name: Notify Mattermos
+      - name: Notify Mattermost
         env: 
           ZOHO_PASS_VAR: ${{ secrets.ZOHO_PASS }}
           ZOHO_USER: ${{ vars.ZOHO_USERNAME }}
           MIGUEL_VAR: ${{ secrets.miguel }}
-        run: echo "Send $MIGUEL_VAR ing  ${{ secrets.miguel }} Mattermost notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Send $MIGUEL_VAR ing  ${{ secrets.miguel }} Matter-$API_KEY-most  notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
 
       - name: Email Zoho notification
         uses: hilarion5/send-mail@v1
