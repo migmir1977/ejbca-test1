@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: server-mm
+    environment: 
+      name: testing    
 
     steps:
       - name: Checkout code
