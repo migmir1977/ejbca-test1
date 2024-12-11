@@ -10,7 +10,8 @@ on:
 jobs:
   notify:
     runs-on: server-mm
-    environment: testing
+    environment: 
+      name: testing
     steps:
       - name: Mattermost notification
         run: |
@@ -19,7 +20,8 @@ jobs:
         env: 
           ZOHO_PASS_VAR: ${{ secrets.ZOHO_PASS }}
           ZOHO_USER: ${{ vars.ZOHO_USERNAME }}
-        run: echo "Sending Mattermost notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
+          MIGUEL_VAR: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "Send $MIGUEL_VAR ing  ${{ secrets.MIGUEL }} Mattermost notification $ZOHO_USER and $ZOHO_PASS_VAR ..."
 
       - name: Email Zoho notification
         uses: hilarion5/send-mail@v1
