@@ -1,4 +1,4 @@
-name: First action
+name: Performance  test
 
 on:
   workflow_dispatch:
