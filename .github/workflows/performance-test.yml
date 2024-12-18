@@ -39,11 +39,6 @@ jobs:
           name: jmeter-report-${{ env.RUN_ID }}
           path: report-${{ env.RUN_ID }}
   
-      - name: Download JMeter Report
-        uses: actions/download-artifact@v3
-        with:
-         name: jmeter-report-${{ env.RUN_ID }}
-
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
