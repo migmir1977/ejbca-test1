@@ -23,7 +23,7 @@ jobs:
 
       - name: Run JMeter Test Plan
         run: |
-          sudo /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/performance-test.jmx -l test-results-${RUN_ID}.jtl -e -o report-${RUN_ID}
+          /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/performance-test.jmx -l test-results-${RUN_ID}.jtl -e -o report-${RUN_ID}
         env:
           RUN_ID: ${{ env.RUN_ID }}
 
