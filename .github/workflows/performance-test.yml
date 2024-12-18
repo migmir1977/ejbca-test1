@@ -21,6 +21,12 @@ jobs:
         id: generate-id
         run: echo "RUN_ID=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
 
+      - name: Verify files
+        run: |
+          pwd
+          ls
+          ls tests/
+          
       - name: Run JMeter Test Plan
         run: |
           /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/performance-test.jmx -l test-results-${RUN_ID}.jtl -e -o report-${RUN_ID}
