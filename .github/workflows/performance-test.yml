@@ -1,5 +1,8 @@
 name: Performance  test
-
+branding:
+  color: "blue"
+  icon: "zap"
+  
 on:
   workflow_dispatch:
     inputs:
