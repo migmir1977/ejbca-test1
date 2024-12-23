@@ -2,6 +2,46 @@ name: Performance  test
 
 on:
   workflow_dispatch:
+    inputs:
+      num_of_threads:
+        description: 'Number of threads (end-user clients)'
+        required: false
+        default: '3'
+      num_of_certs:
+        description: 'Number of certificates per thread'
+        required: false
+        default: '5'
+      ca_name:
+        description: 'CA to issue the certificates'
+        required: true
+        default: ''
+      cert_profile:
+        description: 'CA profile name'
+        required: true
+        default: ''
+      subject_dn:
+        description: 'Subject DN'
+        required: true
+        default: ''
+      test_boolean:
+        description: 'Test boolean'
+        type: boolean
+        required: true
+        default: false
+      test_choice:
+        description: 'test choice'
+        type: choice
+        required: true
+        default: 'two'
+        options:
+          - one
+          - two
+          - three
+
+
+
+
+
 
 permissions:
   contents: write  # Required to push changes to gh-pages
