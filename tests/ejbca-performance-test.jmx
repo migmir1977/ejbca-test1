@@ -49,7 +49,7 @@ def csr = prev.getResponseDataAsString()
 
 def cpn = &quot;${__P(cert_profile_name, "cpn")}&quot;
 def eepn = &quot;${__P(end_user_name, "eepn")}&quot;
-def ca = &quot;mm0251_rsa2048_issuing_rsa2048&quot;
+def ca = &quot;${__P(ca_name, "ca")}&quot;
 def un = &quot;username${__threadNum}&quot;
 def pwd = &quot;username${__threadNum}&quot;
 def ic = &quot;true&quot;
