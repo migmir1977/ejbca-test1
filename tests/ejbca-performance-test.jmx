@@ -71,7 +71,7 @@ vars.put(&quot;json_payload&quot;, jsonPayload)  // Store the payload in a JMete
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request - enroll">
           <stringProp name="HTTPSampler.domain">${__P(host_name, "localhost")}</stringProp>
-          <stringProp name="HTTPSampler.port">8${__P(host_port, 8443)}</stringProp>
+          <stringProp name="HTTPSampler.port">${__P(host_port, 8443)}</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.path">/ejbca/ejbca-rest-api/v1/certificate/pkcs10enroll</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
