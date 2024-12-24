@@ -78,7 +78,8 @@ jobs:
         run: |
           pwd
           ls
-          ls tests/
+          echo "$EJBCA_HOSTNAME $EJBCA_PORT"
+
 
       - name: Run JMeter Test Plan
         run: |
