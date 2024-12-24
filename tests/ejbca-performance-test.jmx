@@ -47,8 +47,8 @@
 //def csr = prev.getResponseDataAsString().trim().replaceAll(&quot;\\r?\\n&quot;, &quot;&quot;)
 def csr = prev.getResponseDataAsString()
 
-def cpn = &quot;mm_ENDUSER&quot;
-def eepn = &quot;mm_ENDUSER&quot;
+def cpn = &quot;${__P(cert_profile_name, "cpn")}&quot;
+def eepn = &quot;${__P(end_user_name, "eepn")}&quot;
 def ca = &quot;mm0251_rsa2048_issuing_rsa2048&quot;
 def un = &quot;username${__threadNum}&quot;
 def pwd = &quot;username${__threadNum}&quot;
@@ -70,8 +70,8 @@ vars.put(&quot;json_payload&quot;, jsonPayload)  // Store the payload in a JMete
           <hashTree/>
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request - enroll">
-          <stringProp name="HTTPSampler.domain">192.168.1.128</stringProp>
-          <stringProp name="HTTPSampler.port">8443</stringProp>
+          <stringProp name="HTTPSampler.domain">${__P(host_name, "localhost")}</stringProp>
+          <stringProp name="HTTPSampler.port">8${__P(host_port, 8443)}</stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.path">/ejbca/ejbca-rest-api/v1/certificate/pkcs10enroll</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
