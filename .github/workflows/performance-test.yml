@@ -2,10 +2,18 @@ name: Performance  test
 branding:
   color: "blue"
   icon: "zap"
-  
+
 on:
   workflow_dispatch:
     inputs:
+      environment_name:
+        description: 'Environment name'
+        required: true
+        type: choice
+        options:
+          - vm6.devisefutures.com
+          - local.av
+        default: local.av
       num_of_threads:
         description: 'Number of threads (end-user clients)'
         required: false
@@ -20,6 +28,10 @@ on:
         default: ''
       cert_profile:
         description: 'CA profile name'
+        required: true
+        default: ''
+      enduser_profile:
+        description: 'Enduser profile name'
         required: true
         default: ''
       subject_dn:
@@ -52,9 +64,10 @@ permissions:
 
 jobs:
   run-jmeter:
+    if: ${{ inputs.environment_name == 'local.av' }}
     runs-on: server-mm
     environment: 
-      name: testing    
+      name: local.av    
 
     steps:
       - name: Checkout code
@@ -72,7 +85,18 @@ jobs:
 
       - name: Run JMeter Test Plan
         run: |
-          /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx -l test-results-${RUN_ID}.jtl -e -o report-${RUN_ID}
+          /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
+          -l test-results-${RUN_ID}.jtl \
+          -Jthread_count=${{ inputs.num_of_threads }} \
+          -Jramp_up_period=1 \
+          -Jloop_count=${{ inputs.num_of_certs }} \
+          -Jhost_name=$EJBCA_HOSTNAME \
+          -Jhost_port=$EJBCA_PORT \
+          -Jcert_profile_name=${{ inputs.cert_profile }} \
+          -Jend_user_name=${{ inputs.enduser_profile }} \
+          -Jca_name=${{ inputs.ca_name }} \
+          -Jsubject_dn=${{ inputs.subject_dn }} \
+          -e -o report-${RUN_ID} 
         env:
           RUN_ID: ${{ env.RUN_ID }}
 
