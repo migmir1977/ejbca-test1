@@ -78,7 +78,7 @@ jobs:
         run: |
           pwd
           ls
-          echo "$EJBCA_HOSTNAME $EJBCA_PORT"
+          echo "${{ vars.EJBCA_HOSTNAME }} ${{ vars.EJBCA_PORT }}"
 
 
       - name: Run JMeter Test Plan
@@ -88,8 +88,8 @@ jobs:
           -Jthread_count=${{ inputs.num_of_threads }} \
           -Jramp_up_period=1 \
           -Jloop_count=${{ inputs.num_of_certs }} \
-          -Jhost_name=$EJBCA_HOSTNAME \
-          -Jhost_port=$EJBCA_PORT \
+          -Jhost_name=${{ vars.EJBCA_HOSTNAME }} \
+          -Jhost_port=${{ vars.EJBCA_PORT }} \
           -Jcert_profile_name=${{ inputs.cert_profile }} \
           -Jend_user_name=${{ inputs.enduser_profile }} \
           -Jca_name=${{ inputs.ca_name }} \
