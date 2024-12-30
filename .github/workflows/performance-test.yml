@@ -4,13 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       environment_name:
-        description: 'Environment name'
-        required: true
-        type: choice
-        options:
-          - vm6.devisefutures.com
-          - local.av
-        default: local.av
+        type: environment
+        description: 'Choose environment'      
+      #environment_name:
+      #  description: 'Environment name'
+      #  required: true
+      #  type: choice
+      #  options:
+      #    - vm6.devisefutures.com
+      #    - local.av
+      #  default: local.av
       num_of_threads:
         description: 'Number of threads (end-user clients)'
         required: false
@@ -61,14 +64,22 @@ permissions:
 
 jobs:
   run-jmeter:
-    if: ${{ inputs.environment_name == 'local.av' }}
-    runs-on: server-mm
+    #if: ${{ inputs.environment_name == 'local.av' }}
+    #runs-on: server-mm
+    #environment: 
+    #  name: local.av    
+    
     environment: 
-      name: local.av    
+      name: ${{ inputs.environment_name }}
+    runs-on: ${{ vars.RUNNER_NAME }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: echos
+        id: echos
+        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}""
 
       - name: Generate Unique Identifier
         id: generate-id
@@ -81,34 +92,34 @@ jobs:
           echo "${{ vars.EJBCA_HOSTNAME }} ${{ vars.EJBCA_PORT }}"
 
 
-      - name: Run JMeter Test Plan
-        run: |
-          /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
-          -l test-results-${RUN_ID}.jtl \
-          -Jthread_count=${{ inputs.num_of_threads }} \
-          -Jramp_up_period=1 \
-          -Jloop_count=${{ inputs.num_of_certs }} \
-          -Jhost_name=${{ vars.EJBCA_HOSTNAME }} \
-          -Jhost_port=${{ vars.EJBCA_PORT }} \
-          -Jcert_profile_name=${{ inputs.cert_profile }} \
-          -Jend_user_name=${{ inputs.enduser_profile }} \
-          -Jca_name=${{ inputs.ca_name }} \
-          -Jsubject_dn=${{ inputs.subject_dn }} \
-          -e -o report-${RUN_ID} 
-        env:
-          RUN_ID: ${{ env.RUN_ID }}
+      #- name: Run JMeter Test Plan
+      #  run: |
+      #    /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
+      #    -l test-results-${RUN_ID}.jtl \
+      #    -Jthread_count=${{ inputs.num_of_threads }} \
+      #    -Jramp_up_period=1 \
+      #    -Jloop_count=${{ inputs.num_of_certs }} \
+      #    -Jhost_name=${{ vars.EJBCA_HOSTNAME }} \
+      #    -Jhost_port=${{ vars.EJBCA_PORT }} \
+      #    -Jcert_profile_name=${{ inputs.cert_profile }} \
+      #    -Jend_user_name=${{ inputs.enduser_profile }} \
+      #    -Jca_name=${{ inputs.ca_name }} \
+      #    -Jsubject_dn=${{ inputs.subject_dn }} \
+      #    -e -o report-${RUN_ID} 
+      #  env:
+      #    RUN_ID: ${{ env.RUN_ID }}
 
-      - name: Save JMeter Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jmeter-report-${{ env.RUN_ID }}
-          path: report-${{ env.RUN_ID }}
+      #- name: Save JMeter Report
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: jmeter-report-${{ env.RUN_ID }}
+      #    path: report-${{ env.RUN_ID }}
   
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: report-${{ env.RUN_ID }}          
+      #- name: Publish to GitHub Pages
+      #  uses: peaceiris/actions-gh-pages@v3
+      #  with:
+      #    github_token: ${{ secrets.GITHUB_TOKEN }}
+      #    publish_dir: report-${{ env.RUN_ID }}          
 
 #      - name: Checkout gh-pages branch
 #        uses: actions/checkout@v3
