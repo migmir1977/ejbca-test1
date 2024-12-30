@@ -67,6 +67,9 @@ jobs:
     environment: ${{ inputs.environment_name }}
     runs-on: ubuntu-latest
     steps:
+      - name: echos
+        id: echos
+        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}""
       - name: Dump Variables context
         env:
           VARS_CONTEXT: ${{ toJson(vars) }}
