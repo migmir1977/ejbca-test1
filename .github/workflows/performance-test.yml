@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: echos
         id: echos
-        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}""
+        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}"
       - name: Dump Variables context
         env:
           VARS_CONTEXT: ${{ toJson(vars) }}
