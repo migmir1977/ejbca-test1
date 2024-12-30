@@ -1,0 +1,96 @@
+name: Runner  test
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment_name:
+        type: environment
+        description: 'Choose environment'      
+      num_of_threads:
+        description: 'Number of threads (end-user clients)'
+        required: false
+        default: '3'
+      num_of_certs:
+        description: 'Number of certificates per thread'
+        required: false
+        default: '5'
+      test_boolean:
+        description: 'Test boolean'
+        type: boolean
+        required: true
+        default: false
+      test_choice:
+        description: 'test choice'
+        type: choice
+        required: true
+        default: 'two'
+        options:
+          - one
+          - two
+          - three
+
+permissions:
+  contents: write  # Required to push changes to gh-pages
+  pages: write     # Required to update GitHub Pages      
+
+jobs:
+  dump_contexts_to_log:
+    environment: ${{ inputs.environment_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: echos
+        id: echos
+        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}"
+      - name: Dump Variables context
+        env:
+          VARS_CONTEXT: ${{ toJson(vars) }}
+        run: echo "$VARS_CONTEXT"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+      - name: Dump job context
+        env:
+          JOB_CONTEXT: ${{ toJson(job) }}
+        run: echo "$JOB_CONTEXT"
+      - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJson(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+      - name: Dump strategy context
+        env:
+          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
+        run: echo "$STRATEGY_CONTEXT"
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJson(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
+
+  dynamic-runner:
+    strategy:
+      matrix:
+        runner: [${{ inputs.environment_name }}] # Dynamically sets the runner
+    runs-on: ${{ matrix.runner }}
+    #environment: ${{ inputs.environment_name }}
+    #runs-on: ${{ vars.RUNNER_NAME }}
+
+    steps:
+      - name: echos
+        id: echos
+        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}"
+
+      - name: Generate Unique Identifier
+        id: generate-id
+        run: echo "RUN_ID=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+
+      - name: Verify files
+        run: |
+          pwd
+          ls
+          echo "${{ vars.EJBCA_HOSTNAME }} ${{ vars.EJBCA_PORT }}"
+
+
