@@ -114,7 +114,7 @@ jobs:
 
       - name: echos
         id: echos
-        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}""
+        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}"
 
       - name: Generate Unique Identifier
         id: generate-id
