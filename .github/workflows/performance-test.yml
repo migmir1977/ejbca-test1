@@ -89,7 +89,7 @@ jobs:
           echo "$(pwd)"
           echo "$(ls)"
           echo "$(cat test-results-${RUN_ID}.jtl)"
-          failures=$(grep -c ',false,' test-results-${RUN_ID}.jtl)
+          failures=$(jq '.Total.errorCount' report-${RUN_ID}/statistics.json)          
           echo "JMETER_RETURNVALUE=$failures" >> $GITHUB_ENV
         env:
           RUN_ID: ${{ env.RUN_ID }}
