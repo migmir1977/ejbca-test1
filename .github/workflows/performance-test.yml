@@ -68,34 +68,34 @@ jobs:
         run: |
           echo "Running on ${{ env.runnerLabels }} with variables ${{ vars.EJBCA_HOSTNAME }} and ${{ vars.EJBCA_PORT }}"
   
-      #- name: Run JMeter Test Plan
-      #  run: |
-      #    /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
-      #    -l test-results-${RUN_ID}.jtl \
-      #    -Jthread_count=${{ inputs.num_of_threads }} \
-      #    -Jramp_up_period=1 \
-      #    -Jloop_count=${{ inputs.num_of_certs }} \
-      #    -Jhost_name=${{ vars.EJBCA_HOSTNAME }} \
-      #    -Jhost_port=${{ vars.EJBCA_PORT }} \
-      #    -Jcert_profile_name=${{ inputs.cert_profile }} \
-      #    -Jend_user_name=${{ inputs.enduser_profile }} \
-      #    -Jca_name=${{ inputs.ca_name }} \
-      #    -Jsubject_dn=${{ inputs.subject_dn }} \
-      #    -e -o report-${RUN_ID} 
-      #  env:
-      #    RUN_ID: ${{ env.RUN_ID }}
+      - name: Run JMeter Test Plan
+        run: |
+          /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
+          -l test-results-${RUN_ID}.jtl \
+          -Jthread_count=${{ inputs.num_of_threads }} \
+          -Jramp_up_period=1 \
+          -Jloop_count=${{ inputs.num_of_certs }} \
+          -Jhost_name=${{ vars.EJBCA_HOSTNAME }} \
+          -Jhost_port=${{ vars.EJBCA_PORT }} \
+          -Jcert_profile_name=${{ inputs.cert_profile }} \
+          -Jend_user_name=${{ inputs.enduser_profile }} \
+          -Jca_name=${{ inputs.ca_name }} \
+          -Jsubject_dn=${{ inputs.subject_dn }} \
+          -e -o report-${RUN_ID} 
+        env:
+          RUN_ID: ${{ env.RUN_ID }}
 
-      #- name: Save JMeter Report
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: jmeter-report-${{ env.RUN_ID }}
-      #    path: report-${{ env.RUN_ID }}
+      - name: Save JMeter Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-report-${{ env.RUN_ID }}
+          path: report-${{ env.RUN_ID }}
   
-      #- name: Publish to GitHub Pages
-      #  uses: peaceiris/actions-gh-pages@v3
-      #  with:
-      #    github_token: ${{ secrets.GITHUB_TOKEN }}
-      #    publish_dir: report-${{ env.RUN_ID }}          
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: report-${{ env.RUN_ID }}          
 
 #      - name: Checkout gh-pages branch
 #        uses: actions/checkout@v3
