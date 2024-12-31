@@ -70,27 +70,34 @@ jobs:
           MATRIX_CONTEXT: ${{ toJson(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
-  dynamic-runner:
-    strategy:
-      matrix:
-        runner: [${{ inputs.environment_name }}] # Dynamically sets the runner
-    runs-on: ${{ matrix.runner }}
-    #environment: ${{ inputs.environment_name }}
-    #runs-on: ${{ vars.RUNNER_NAME }}
-
+  setup:
+    name: Setup runner labels for deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment_name }}
+    outputs:
+      deployrunner: ${{ steps.step1.outputs.deployrunner }}
     steps:
-      - name: echos
-        id: echos
-        run: echo "RUNNER=${{ vars.RUNNER_NAME }} ENVIRONMENT=${{ inputs.environment_name }}"
-
-      - name: Generate Unique Identifier
-        id: generate-id
-        run: echo "RUN_ID=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
-
-      - name: Verify files
+      - name: Set runs-on for deploy
+        id: step1
         run: |
-          pwd
-          ls
-          echo "${{ vars.EJBCA_HOSTNAME }} ${{ vars.EJBCA_PORT }}"
+          echo "deployrunner=${{ inputs.environment_name }}" >> $GITHUB_OUTPUT
+        
+  display:
+    needs: [setup]
+    #runs-on: [self-hosted, testingrunners]
+    runs-on: ${{needs.setup.outputs.deployrunner}}
+    name: Displaying labels on local runner
+    environment: ${{ inputs.environment }}
+    env:
+      runnerLabels: ${{needs.setup.outputs.deployrunner}}
+    steps:     
+    - name: Set runs-on for deploy
+      run: |
+        echo "Hello ${{ env.runnerLabels }}"
+    - name: Verify files
+      run: |
+        pwd
+        ls
+        echo "${{ vars.EJBCA_HOSTNAME }} ${{ vars.EJBCA_PORT }}"
 
 
