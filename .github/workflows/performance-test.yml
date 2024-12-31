@@ -66,7 +66,7 @@ jobs:
 
       - name: Show variables
         run: |
-          echo "Running on ${{ env.runnerLabels }} with variable ${{ env.EJBCA_HOSTNAME }} ${{ env.EJBCA_PORT }}"
+          echo "Running on ${{ env.runnerLabels }} with variables ${{ vars.EJBCA_HOSTNAME }} and ${{ vars.EJBCA_PORT }}"
   
       #- name: Run JMeter Test Plan
       #  run: |
