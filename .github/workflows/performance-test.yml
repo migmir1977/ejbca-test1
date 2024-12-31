@@ -81,8 +81,7 @@ jobs:
           -Jend_user_name=${{ inputs.enduser_profile }} \
           -Jca_name=${{ inputs.ca_name }} \
           -Jsubject_dn=${{ inputs.subject_dn }} \
-          -e -o report-${RUN_ID} 
-          
+          -e -o report-${RUN_ID}          
           failures=$(grep -c 'failure="true"' test-results-${RUN_ID}.jtl)          
           if [ $failures -gt 0 ]; then
             echo "JMeter test failed with $failures failures."
