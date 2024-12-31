@@ -88,6 +88,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           echo "$(pwd)"
           echo "$(ls)"
+          echo "$(test-results-${RUN_ID}.jtl)"
           failures=$(grep -c 'failure="true"' test-results-${RUN_ID}.jtl)          
           if [ $failures -gt 0 ]; then
             echo "JMeter test failed with $failures failures."
