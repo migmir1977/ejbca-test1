@@ -82,6 +82,13 @@ jobs:
           -Jca_name=${{ inputs.ca_name }} \
           -Jsubject_dn=${{ inputs.subject_dn }} \
           -e -o report-${RUN_ID} 
+          exit_code=$?
+ 
+          # If the test failed (exit code not 0), fail the workflow
+          if [ $exit_code -ne 0 ]; then
+            echo "JMeter test failed with exit code $exit_code"
+            exit $exit_code
+          fi
         env:
           RUN_ID: ${{ env.RUN_ID }}
 
