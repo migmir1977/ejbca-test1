@@ -173,7 +173,7 @@ $(document).ready(function() {
     });
 
     // Creates APDEX table
-    createTable($("#apdexTable"), {"supportsControllersDiscrimination": true, "overall": {"data": [0.375, 500, 1500, "Total"], "isController": false}, "titles": ["Apdex", "T (Toleration threshold)", "F (Frustration threshold)", "Label"], "items": [{"data": [0.75, 500, 1500, "OS Process Sampler"], "isController": false}, {"data": [0.0, 500, 1500, "HTTP Request - enroll"], "isController": false}]}, function(index, item){
+    createTable($("#apdexTable"), {"supportsControllersDiscrimination": true, "overall": {"data": [0.125, 500, 1500, "Total"], "isController": false}, "titles": ["Apdex", "T (Toleration threshold)", "F (Frustration threshold)", "Label"], "items": [{"data": [0.25, 500, 1500, "OS Process Sampler"], "isController": false}, {"data": [0.0, 500, 1500, "HTTP Request - enroll"], "isController": false}]}, function(index, item){
         switch(index){
             case 0:
                 item = item.toFixed(3);
@@ -187,7 +187,7 @@ $(document).ready(function() {
     }, [[0, 0]], 3);
 
     // Create statistics table
-    createTable($("#statisticsTable"), {"supportsControllersDiscrimination": true, "overall": {"data": ["Total", 4, 2, 50.0, 458.5, 250, 856, 364.0, 856.0, 856.0, 856.0, 0.6864595846919512, 1.2636487472112579, 0.0], "isController": false}, "titles": ["Label", "#Samples", "FAIL", "Error %", "Average", "Min", "Max", "Median", "90th pct", "95th pct", "99th pct", "Transactions/s", "Received", "Sent"], "items": [{"data": ["OS Process Sampler", 2, 0, 0.0, 666.0, 476, 856, 666.0, 856.0, 856.0, 856.0, 2.051282051282051, 1.858974358974359, 0.0], "isController": false}, {"data": ["HTTP Request - enroll", 2, 2, 100.0, 251.0, 250, 252, 251.0, 252.0, 252.0, 252.0, 7.936507936507936, 22.02690972222222, 0.0], "isController": false}]}, function(index, item){
+    createTable($("#statisticsTable"), {"supportsControllersDiscrimination": true, "overall": {"data": ["Total", 4, 2, 50.0, 788.0, 158, 1651, 671.5, 1651.0, 1651.0, 1651.0, 0.9220839096357768, 1.6973907906869525, 0.0], "isController": false}, "titles": ["Label", "#Samples", "FAIL", "Error %", "Average", "Min", "Max", "Median", "90th pct", "95th pct", "99th pct", "Transactions/s", "Received", "Sent"], "items": [{"data": ["OS Process Sampler", 2, 0, 0.0, 1417.0, 1183, 1651, 1417.0, 1651.0, 1651.0, 1651.0, 0.7199424046076314, 0.652447804175666, 0.0], "isController": false}, {"data": ["HTTP Request - enroll", 2, 2, 100.0, 159.0, 158, 160, 159.0, 160.0, 160.0, 160.0, 12.5, 34.6923828125, 0.0], "isController": false}]}, function(index, item){
         switch(index){
             // Errors pct
             case 3:
