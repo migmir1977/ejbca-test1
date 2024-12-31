@@ -86,6 +86,8 @@ jobs:
             echo "JMETER_RETURNVALUE=1" >> $GITHUB_ENV
           fi
           cd $GITHUB_WORKSPACE
+          echo "$(pwd)"
+          echo "$(ls)"
           failures=$(grep -c 'failure="true"' test-results-${RUN_ID}.jtl)          
           if [ $failures -gt 0 ]; then
             echo "JMeter test failed with $failures failures."
