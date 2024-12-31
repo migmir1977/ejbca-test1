@@ -82,7 +82,7 @@ jobs:
           -Jca_name=${{ inputs.ca_name }} \
           -Jsubject_dn=${{ inputs.subject_dn }} \
           -e -o report-${RUN_ID} 
-          exit_code=$? 
+          #exit_code=$? 
           #echo "JMETER_RETURNVALUE=$exit_code" >> $GITHUB_ENV
 
           # Check if there are any failures in the result file (result.jtl)
