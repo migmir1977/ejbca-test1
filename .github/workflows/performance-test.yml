@@ -89,6 +89,13 @@ jobs:
             echo "JMeter test failed with exit code $exit_code"
             exit $exit_code
           fi
+
+          # Check if there are any failures in the result file (result.jtl)
+          failures=$(grep -c 'failure="true"' test-results-${RUN_ID}.jtl)          
+          if [ $failures -gt 0 ]; then
+            echo "JMeter test failed with $failures failures."
+            exit 1
+          fi          
         env:
           RUN_ID: ${{ env.RUN_ID }}
 
