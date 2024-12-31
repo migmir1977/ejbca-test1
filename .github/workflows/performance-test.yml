@@ -48,31 +48,13 @@ jobs:
         run: |
           echo "deployrunner=${{ inputs.environment_name }}" >> $GITHUB_OUTPUT
 
-  display:
-    needs: [setup-runner]
-    #runs-on: [self-hosted, testingrunners]
-    runs-on: ${{needs.setup.outputs.deployrunner}}
-    name: Displaying labels on local runner ${{needs.setup.outputs.deployrunner}}
-    environment: ${{ inputs.environment }}
-    env:
-      runnerLabels: ${{needs.setup.outputs.deployrunner}}
-    steps:     
-    - name: Set runs-on for deploy
-      run: |
-        echo "Hello ${{ env.runnerLabels }}"
-    - name: Verify files
-      run: |
-        pwd
-        ls
-        echo "${{ env.EJBCA_HOSTNAME }} ${{ env.EJBCA_PORT }}"
-        
   run-jmeter:    
     needs: [setup-runner]
     environment: ${{ inputs.environment_name }}
-    runs-on: ${{needs.setup.outputs.deployrunner}}
-    name: Run jmeter on -${{needs.setup.outputs.deployrunner}}-
+    runs-on: ${{needs.setup-runner.outputs.deployrunner}}
+    name: Run jmeter on -${{needs.setup-runner.outputs.deployrunner}}-
     env:
-      runnerLabels: ${{needs.setup.outputs.deployrunner}}
+      runnerLabels: ${{needs.setup-runner.outputs.deployrunner}}
 
     steps:
       - name: Checkout code
