@@ -81,8 +81,8 @@ jobs:
           -Jend_user_name=${{ inputs.enduser_profile }} \
           -Jca_name=${{ inputs.ca_name }} \
           -Jsubject_dn=${{ inputs.subject_dn }} \
-          -e -o report-${RUN_ID}          
-          if [ $? -ne 0 ]; then                
+          -e -o report-${RUN_ID}
+          if [ $? -ne 0 ]; then
             echo "JMETER_RETURNVALUE=1" >> $GITHUB_ENV
           fi
           cd $GITHUB_WORKSPACE
@@ -93,7 +93,7 @@ jobs:
           if [ $failures -gt 0 ]; then
             echo "JMeter test failed with $failures failures."
             echo "JMETER_RETURNVALUE=1" >> $GITHUB_ENV
-          fi          
+          fi
         env:
           RUN_ID: ${{ env.RUN_ID }}
 
@@ -113,8 +113,8 @@ jobs:
         run: |
           if [ "$JMETER_RETURNVALUE" -ne 0 ]; then
             echo "Job failed due to JMeter test failures."
-            exit 1          
-          fi        
+            exit 1
+          fi
 
 #      - name: Checkout gh-pages branch
 #        uses: actions/checkout@v3
