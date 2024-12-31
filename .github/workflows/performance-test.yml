@@ -70,7 +70,7 @@ jobs:
     needs: [setup-runner]
     environment: ${{ inputs.environment_name }}
     runs-on: ${{needs.setup.outputs.deployrunner}}
-    name: Run jmeter on: ${{needs.setup.outputs.deployrunner}}
+    name: Run jmeter on -${{needs.setup.outputs.deployrunner}}-
     env:
       runnerLabels: ${{needs.setup.outputs.deployrunner}}
 
