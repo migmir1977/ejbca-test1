@@ -86,7 +86,7 @@ jobs:
     needs: [setup]
     #runs-on: [self-hosted, testingrunners]
     runs-on: ${{needs.setup.outputs.deployrunner}}
-    name: Displaying labels on local runner
+    name: Displaying labels on local runner ${{needs.setup.outputs.deployrunner}}
     environment: ${{ inputs.environment }}
     env:
       runnerLabels: ${{needs.setup.outputs.deployrunner}}
@@ -98,6 +98,6 @@ jobs:
       run: |
         pwd
         ls
-        echo "${{ vars.EJBCA_HOSTNAME }} ${{ vars.EJBCA_PORT }}"
+        echo "${{ env.EJBCA_HOSTNAME }} ${{ env.EJBCA_PORT }}"
 
 
