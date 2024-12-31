@@ -86,11 +86,11 @@ jobs:
           #echo "JMETER_RETURNVALUE=$exit_code" >> $GITHUB_ENV
 
           # Check if there are any failures in the result file (result.jtl)
-          #failures=$(grep -c 'failure="true"' test-results-${RUN_ID}.jtl)          
-          #if [ $failures -gt 0 ]; then
-          #  echo "JMeter test failed with $failures failures."
-          #  echo "JMETER_RETURNVALUE=1" >> $GITHUB_ENV
-          #fi          
+          failures=$(grep -c 'failure="true"' test-results-${RUN_ID}.jtl)          
+          if [ $failures -gt 0 ]; then
+            echo "JMeter test failed with $failures failures."
+            echo "JMETER_RETURNVALUE=1" >> $GITHUB_ENV
+          fi          
         env:
           RUN_ID: ${{ env.RUN_ID }}
 
