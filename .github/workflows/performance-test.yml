@@ -64,7 +64,7 @@ jobs:
       
       - name: Configure JMeter with EJBCA keystore
         run: |
-          echo "pwd"
+          echo "$(pwd)"
           JMETER_PROPERTIES_FILE="./apache-jmeter-5.6.3/bin/system.properties"
           grep -q "^javax.net.ssl.keyStoreType" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStoreType=pkcs12" >> "$JMETER_PROPERTIES_FILE"
           grep -q "^javax.net.ssl.keyStore" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStore=${{ vars.EJBCA_P12_KEYSTORE_FILE }}" >> "$JMETER_PROPERTIES_FILE"
