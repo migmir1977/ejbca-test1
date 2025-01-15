@@ -74,10 +74,8 @@ jobs:
       
       - name: Install jq
         run: |
-          whoami
-          sudo -l -U guest
           sudo /usr/bin/apt-get update
-          sudo /usr/bin/apt-get install -y jq
+          sudo /usr/bin/apt-get install jq
       - name: Configure JMeter with EJBCA keystore
         run: |
           echo "$(pwd)"
