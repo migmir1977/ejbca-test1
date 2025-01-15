@@ -6,8 +6,8 @@ on:
       - main
       - develop          
   workflow_dispatch:
-  schedule:
-      - cron: '0 1 * * *' #Run everyday at 01 AM UTC
+  #schedule:
+  #    - cron: '0 1 * * *' #Run everyday at 01 AM UTC
 
 jobs:
   build:
