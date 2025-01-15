@@ -75,9 +75,9 @@ jobs:
           echo "$(pwd)"
           echo "$(ls jmeter)"
           JMETER_PROPERTIES_FILE="$GITHUB_WORKSPACE/jmeter/apache-jmeter-5.6.3/bin/system.properties"
-          grep -q "^javax.net.ssl.keyStoreType" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStoreType=pkcs12" >> "$JMETER_PROPERTIES_FILE"
-          grep -q "^javax.net.ssl.keyStore" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStore=${{ vars.EJBCA_P12_KEYSTORE_FILE }}" >> "$JMETER_PROPERTIES_FILE"
-          grep -q "^javax.net.ssl.keyStorePassword" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStorePassword=${{ secrets.EJBCA_KEYSTORE_PASS }}" >> "$JMETER_PROPERTIES_FILE"
+          grep -q "^javax.net.ssl.keyStoreType=" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStoreType=pkcs12" >> "$JMETER_PROPERTIES_FILE"
+          grep -q "^javax.net.ssl.keyStore=" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStore=${{ vars.EJBCA_P12_KEYSTORE_FILE }}" >> "$JMETER_PROPERTIES_FILE"
+          grep -q "^javax.net.ssl.keyStorePassword=" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStorePassword=${{ secrets.EJBCA_KEYSTORE_PASS }}" >> "$JMETER_PROPERTIES_FILE"
 
       - name: Generate Unique Identifier
         id: generate-id
