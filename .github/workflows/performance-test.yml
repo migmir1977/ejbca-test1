@@ -57,8 +57,24 @@ jobs:
       runnerLabels: ${{needs.setup-runner.outputs.deployrunner}}
 
     steps:
+      - name: Install JMeter
+        run: |
+          curl -o apache-jmeter-5.6.3.tgz https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
+          tar -xvzf apache-jmeter-5.6.3.tgz   
+      
+      - name: Configure JMeter with EJBCA keystore
+        run: |
+          JMETER_PROPERTIES_FILE="./apache-jmeter-5.6.3/bin/system.properties"
+          grep -q "^javax.net.ssl.keyStoreType" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStoreType=pkcs12" >> "$JMETER_PROPERTIES_FILE"
+          grep -q "^javax.net.ssl.keyStore" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStore=${{ vars.EJBCA_P12_KEYSTORE_FILE }}" >> "$JMETER_PROPERTIES_FILE"
+          grep -q "^javax.net.ssl.keyStorePassword" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStorePassword=${{ secrets.EJBCA_KEYSTORE_PASS }}" >> "$JMETER_PROPERTIES_FILE"
+
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: CSR script customization
+        run: |
+          chmod +x tests/create_csr.sh
 
       - name: Generate Unique Identifier
         id: generate-id
@@ -70,7 +86,7 @@ jobs:
   
       - name: Run JMeter Test Plan
         run: |
-          /opt/jmeter-5.6.3/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
+          ./apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
           -l test-results-${RUN_ID}.jtl \
           -Jthread_count=${{ inputs.num_of_threads }} \
           -Jramp_up_period=1 \

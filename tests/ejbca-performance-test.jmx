@@ -21,7 +21,7 @@
         <SystemSampler guiclass="SystemSamplerGui" testclass="SystemSampler" testname="OS Process Sampler">
           <boolProp name="SystemSampler.checkReturnCode">true</boolProp>
           <stringProp name="SystemSampler.expectedReturnCode">0</stringProp>
-          <stringProp name="SystemSampler.command">/home/guest/jmeterTests/openssl.sh</stringProp>
+          <stringProp name="SystemSampler.command">create_csr.sh</stringProp>
           <elementProp name="SystemSampler.arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
             <collectionProp name="Arguments.arguments">
               <elementProp name="" elementType="Argument">
