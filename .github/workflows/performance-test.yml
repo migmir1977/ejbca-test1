@@ -67,6 +67,7 @@ jobs:
       - name: Install JMeter 5.6.3
         run: |
           echo "$(pwd)"
+          echo "$(whoami)"
           mkdir jmeter; cd jmeter          
           curl -o apache-jmeter-5.6.3.tgz https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xvzf apache-jmeter-5.6.3.tgz   
