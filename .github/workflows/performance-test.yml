@@ -64,18 +64,22 @@ jobs:
         run: |
           chmod +x tests/create_csr.sh
 
-      - name: Install JMeter
+      - name: Install JMeter 5.6.3
         run: |
           echo "$(pwd)"
           mkdir jmeter; cd jmeter          
           curl -o apache-jmeter-5.6.3.tgz https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
           tar -xvzf apache-jmeter-5.6.3.tgz   
       
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
       - name: Configure JMeter with EJBCA keystore
         run: |
           echo "$(pwd)"
           echo "$(ls jmeter)"
-          JMETER_PROPERTIES_FILE="jmeter/apache-jmeter-5.6.3/bin/system.properties"
+          JMETER_PROPERTIES_FILE="$GITHUB_WORKSPACE/jmeter/apache-jmeter-5.6.3/bin/system.properties"
           grep -q "^javax.net.ssl.keyStoreType" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStoreType=pkcs12" >> "$JMETER_PROPERTIES_FILE"
           grep -q "^javax.net.ssl.keyStore" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStore=${{ vars.EJBCA_P12_KEYSTORE_FILE }}" >> "$JMETER_PROPERTIES_FILE"
           grep -q "^javax.net.ssl.keyStorePassword" "$JMETER_PROPERTIES_FILE" || echo "javax.net.ssl.keyStorePassword=${{ secrets.EJBCA_KEYSTORE_PASS }}" >> "$JMETER_PROPERTIES_FILE"
@@ -90,7 +94,7 @@ jobs:
   
       - name: Run JMeter Test Plan
         run: |
-          jmeter/apache-jmeter-5.6.3/bin/jmeter -n -t tests/ejbca-performance-test.jmx \
+          $GITHUB_WORKSPACE/jmeter/apache-jmeter-5.6.3/bin/jmeter -n -t $GITHUB_WORKSPACE/tests/ejbca-performance-test.jmx \
           -l test-results-${RUN_ID}.jtl \
           -Jthread_count=${{ inputs.num_of_threads }} \
           -Jramp_up_period=1 \
