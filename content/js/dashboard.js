@@ -187,7 +187,7 @@ $(document).ready(function() {
     }, [[0, 0]], 3);
 
     // Create statistics table
-    createTable($("#statisticsTable"), {"supportsControllersDiscrimination": true, "overall": {"data": ["Total", 2, 1, 50.0, 1117.5, 768, 1467, 1117.5, 1467.0, 1467.0, 1467.0, 0.444642063139173, 0.25271648510449085, 0.3067769703201423], "isController": false}, "titles": ["Label", "#Samples", "FAIL", "Error %", "Average", "Min", "Max", "Median", "90th pct", "95th pct", "99th pct", "Transactions/s", "Received", "Sent"], "items": [{"data": ["OS Process Sampler", 1, 0, 0.0, 768.0, 768, 768, 768.0, 768.0, 768.0, 768.0, 1.3020833333333333, 1.1800130208333333, 0.0], "isController": false}, {"data": ["HTTP Request - enroll", 1, 1, 100.0, 1467.0, 1467, 1467, 1467.0, 1467.0, 1467.0, 1467.0, 0.6816632583503749, 0.15710207907293797, 0.9406154141104294], "isController": false}]}, function(index, item){
+    createTable($("#statisticsTable"), {"supportsControllersDiscrimination": true, "overall": {"data": ["Total", 2, 1, 50.0, 1188.5, 635, 1742, 1188.5, 1742.0, 1742.0, 1742.0, 0.4058441558441559, 0.230665330762987, 0.280008687601461], "isController": false}, "titles": ["Label", "#Samples", "FAIL", "Error %", "Average", "Min", "Max", "Median", "90th pct", "95th pct", "99th pct", "Transactions/s", "Received", "Sent"], "items": [{"data": ["OS Process Sampler", 1, 0, 0.0, 635.0, 635, 635, 635.0, 635.0, 635.0, 635.0, 1.574803149606299, 1.4271653543307086, 0.0], "isController": false}, {"data": ["HTTP Request - enroll", 1, 1, 100.0, 1742.0, 1742, 1742, 1742.0, 1742.0, 1742.0, 1742.0, 0.5740528128587831, 0.13230123421354764, 0.7921256099311137], "isController": false}]}, function(index, item){
         switch(index){
             // Errors pct
             case 3:
