@@ -14,6 +14,19 @@ on:
         description: 'Number of certificates per thread'
         required: false
         default: '5'
+      algorithm:
+        description: 'Key algorithms'
+        type: choice
+        required: true
+        default: 'RSA:2048'
+        options:
+          - RSA:1024
+          - RSA:2048
+          - RSA:3072
+          - RSA:4096
+          - EC:P-256
+          - EC:P-384
+          - ED25519  
       ca_name:
         description: 'CA to issue the certificates'
         required: true
@@ -29,7 +42,7 @@ on:
       subject_dn:
         description: 'Subject DN'
         required: true
-        default: ''
+        default: '/CN=enduser${THREAD}/O=enduser${THREAD}_org/C=PT'
 
 permissions:
   contents: write  # Required to push changes to gh-pages
@@ -87,6 +100,7 @@ jobs:
         run: |
           echo "Running on ${{ env.runnerLabels }} with variables ${{ vars.EJBCA_HOSTNAME }} and ${{ vars.EJBCA_PORT }}"
   
+    #run jmeter test plan:
       - name: Run JMeter Test Plan
         run: |
           $GITHUB_WORKSPACE/jmeter/apache-jmeter-5.6.3/bin/jmeter -n -t $GITHUB_WORKSPACE/tests/ejbca-performance-test.jmx \
@@ -98,6 +112,7 @@ jobs:
           -Jhost_port=${{ vars.EJBCA_PORT }} \
           -Jcert_profile_name=${{ inputs.cert_profile }} \
           -Jend_user_name=${{ inputs.enduser_profile }} \
+          -Jalgorithm=${{ inputs.algorithm }} \
           -Jca_name=${{ inputs.ca_name }} \
           -Jsubject_dn=${{ inputs.subject_dn }} \
           -e -o report-${RUN_ID}
@@ -119,47 +134,49 @@ jobs:
           name: jmeter-report-${{ env.RUN_ID }}
           path: report-${{ env.RUN_ID }}
   
-      - name: Publish to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+#      - name: Publish to GitHub Pages
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: report-${{ env.RUN_ID }}
+
+    #publish jmeter report:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: report-${{ env.RUN_ID }}
-      
+          path: repo
+          ref: gh-pages  # gh-pages branch
+
+      - name: Copy JMeter Report to gh-pages directory
+        run: |
+          mkdir -p repo/reports/${RUN_ID}
+          cp -r report-${RUN_ID}/* repo/reports/${RUN_ID}/
+            
+      - name: Generate Index File
+        run: |
+          cd repo
+          echo "<!DOCTYPE html>" > index.html
+          echo "<html><head><title>Reports</title></head><body><h1>Reports List</h1><ul>" >> index.html
+          for folder in $(ls -d reports/*/); do
+            folder_name=$(basename $folder)
+            echo "<li><a href='reports/$folder_name/index.html'>$folder_name</a></li>" >> index.html
+          done
+          echo "</ul></body></html>" >> index.html              
+
+      - name: Commit and Push Reports to gh-pages
+        run: |
+          cd repo
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add reports/${RUN_ID}
+          git add index.html
+          git commit -m "Add JMeter report for ${RUN_ID}"
+          git push origin gh-pages
+
       - name: Run final exit check
         run: |
           if [ "$JMETER_RETURNVALUE" -ne 0 ]; then
             echo "Job failed due to JMeter test failures."
             exit 1
           fi
-
-#      - name: Checkout gh-pages branch
-#        uses: actions/checkout@v3
-#        with:
-#          path: repo
-#          ref: gh-pages  # gh-pages branch
-#
-#      - name: Copy JMeter Report to gh-pages directory
-#        run: |
-#          mkdir -p repo/reports/${RUN_ID}
-#          cp -r report-${RUN_ID}/* repo/reports/${RUN_ID}/
-#            
-#      - name: Generate Index File
-#        run: |
-#          cd repo
-#          echo "<!DOCTYPE html>" > index.html
-#          echo "<html><head><title>Reports</title></head><body><h1>Reports List</h1><ul>" >> index.html
-#          for folder in $(ls -d reports/*/); do
-#            folder_name=$(basename $folder)
-#            echo "<li><a href='reports/$folder_name/index.html'>$folder_name</a></li>" >> index.html
-#          done
-#          echo "</ul></body></html>" >> index.html              
-#
-#      - name: Commit and Push Reports to gh-pages
-#        run: |
-#          cd repo
-#          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-#          git config --local user.name "github-actions[bot]"
-#          git add reports/${RUN_ID}
-#          git add index.html
-#          git commit -m "Add JMeter report for ${RUN_ID}"
-#          git push origin gh-pages
+  
