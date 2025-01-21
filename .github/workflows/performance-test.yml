@@ -42,7 +42,7 @@ on:
       subject_dn:
         description: 'Subject DN'
         required: true
-        default: '/CN=enduser${THREAD}/O=enduser${THREAD}_org/C=PT'
+        default: '/CN=enduser#/O=enduser#_org/C=PT'
 
 permissions:
   contents: write  # Required to push changes to gh-pages

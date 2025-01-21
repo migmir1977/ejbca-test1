@@ -20,10 +20,14 @@ elif [[ "${key_algorithm}" == "ED25519" ]]; then
     # Generate key
     key_cmd="openssl genpkey -algorithm ${key_algorithm} 2>/dev/null"
 fi
-echo "${subject} ${algorithm} ${THREAD} ${key_cmd} ${key_algorithm} " >> /home/guest/github_runner/actions-runner/_work/ejbca-test1/mm.txt
+
+# Change "#" with ${THREAD}
+changed_subject=$(echo "$subject" | sed "s/#/\${THREAD}/g")
+
+echo "$changed_subject ${algorithm} ${THREAD} ${key_cmd} ${key_algorithm} " >> /home/guest/github_runner/actions-runner/_work/ejbca-test1/mm.txt
 # Create CSR
 #csr_cmd="openssl req -new -key <(${key_cmd}) -subj /CN=enduser${THREAD}/O=enduser${THREAD}_org/C=PT"
-csr_cmd="openssl req -new -key <($key_cmd) -subj ${subject}"
+csr_cmd="openssl req -new -key <($key_cmd) -subj ${changed_subject}"
 echo -n "-----BEGIN CERTIFICATE REQUEST-----\n"
 eval ${csr_cmd} | grep -v "CERTIFICATE REQUEST" | tr -d '\n'
 echo -n "\n-----END CERTIFICATE REQUEST-----"
