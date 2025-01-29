@@ -1,0 +1,50 @@
+{
+  "Total" : {
+    "transaction" : "Total",
+    "sampleCount" : 60000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 472.51505000000026,
+    "medianResTime" : 1253.0,
+    "minResTime" : 14.0,
+    "maxResTime" : 15054.0,
+    "pct1ResTime" : 2040.0,
+    "pct2ResTime" : 2230.0,
+    "pct3ResTime" : 2511.9900000000016,
+    "throughput" : 6.32286309357458,
+    "receivedKBytesPerSec" : 11.706784619644747,
+    "sentKBytesPerSec" : 3.047157322423444
+  },
+  "OS Process Sampler" : {
+    "transaction" : "OS Process Sampler",
+    "sampleCount" : 30000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 26.005133333333408,
+    "medianResTime" : 24.0,
+    "minResTime" : 14.0,
+    "maxResTime" : 888.0,
+    "pct1ResTime" : 32.0,
+    "pct2ResTime" : 35.0,
+    "pct3ResTime" : 46.0,
+    "throughput" : 3.1622486539361563,
+    "receivedKBytesPerSec" : 1.4915256347687131,
+    "sentKBytesPerSec" : 0.0
+  },
+  "HTTP Request - enroll" : {
+    "transaction" : "HTTP Request - enroll",
+    "sampleCount" : 30000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 919.024966666663,
+    "medianResTime" : 1460.0,
+    "minResTime" : 149.0,
+    "maxResTime" : 15054.0,
+    "pct1ResTime" : 2047.0,
+    "pct2ResTime" : 2236.0,
+    "pct3ResTime" : 2535.0,
+    "throughput" : 3.1617877295866292,
+    "receivedKBytesPerSec" : 10.216795332599254,
+    "sentKBytesPerSec" : 3.04750063051317
+  }
+}
