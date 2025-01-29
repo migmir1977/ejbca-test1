@@ -149,8 +149,8 @@ jobs:
 
       - name: Copy JMeter Report to gh-pages directory
         run: |
-          mkdir -p repo/reports/${RUN_ID}
-          cp -r report-${RUN_ID}/* repo/reports/${RUN_ID}/
+          mkdir -p repo/reports/${RUN_ID}_${{ inputs.algorithm }}_on_${{ env.runnerLabels }}
+          cp -r report-${RUN_ID}/* repo/reports/${RUN_ID}_${{ inputs.algorithm }}_on_${{ env.runnerLabels }}/
             
       - name: Generate Index File
         run: |
