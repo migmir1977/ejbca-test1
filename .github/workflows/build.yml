@@ -31,16 +31,15 @@ jobs:
         run: |
           cp conf/ejbca.properties.sample conf/ejbca.properties
           echo "appserver.home=/opt/wildfly-26.1.3.Final" >> conf/ejbca.properties
-          echo "appserver.type=jboss" >> conf/ejbca.properties
-
-      - name: List top-level files
-        run: ls modules/cesecore-entity/*
+          echo "appserver.type=jboss" >> conf/ejbca.properties      
         
       - name: Compile with Ant
         run: |
           ant -q clean 
           ant -q deployear
-          
+
+      - name: List top-level files
+        run: ls modules/cesecore-entity/*          
         
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
