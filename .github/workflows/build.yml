@@ -33,6 +33,7 @@ jobs:
 
       - name: Configure ejbca.properties
         run: |
+          cp conf/ejbca.properties.sample conf/ejbca.properties
           sed -i 's|^appserver.home=.*|appserver.home=/opt/wildfly-26.1.3.Final|' conf/ejbca.properties
           sed -i 's|^appserver.type=.*|appserver.type=jboss|' conf/ejbca.properties
 
