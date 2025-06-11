@@ -23,7 +23,11 @@ jobs:
         run: sudo apt-get install -y ant
 
       - name: Compile with Ant
-        run: ant clean all
+        run: |
+          ant -q clean
+          ant -q compile
+          ant -q compile_adminweb
+          ant -q compile_ejb
         
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
