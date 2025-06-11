@@ -38,9 +38,9 @@ jobs:
         
       - name: Compile with Ant
         run: |
-          ant -q clean          
-          ant -q build_adminweb
-          ant -q build_ejb
+          ant -q clean 
+          ant -q deployear
+          
         
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
