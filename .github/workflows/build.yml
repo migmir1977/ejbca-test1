@@ -34,7 +34,7 @@ jobs:
           echo "appserver.type=jboss" >> conf/ejbca.properties
 
       - name: List top-level files
-        run: ls modules/cesecore-entity/build/classes/org/cesecore/*
+        run: ls modules/
         
       - name: Compile with Ant
         run: |
