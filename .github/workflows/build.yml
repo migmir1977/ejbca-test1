@@ -43,7 +43,7 @@ jobs:
           ant -q deployear
 
       - name: List top-level files
-        run: ls modules/cesecore-entity/*          
+        run: find ejbca/ejbca-ce -name "*.class          
         
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
